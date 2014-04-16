@@ -1,8 +1,7 @@
-<? echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<? echo '<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>GreenyBox</title>
-<meta http-equiv="content-type" content="text/html;" charset=utf-8" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <link href="/template/style.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/template/js/cufon-yui.js"></script>
 <script type="text/javascript" src="/template/js/arial.js"></script>
@@ -34,7 +33,11 @@
   <div class="body">
     <div class="body_resize">
       <div class="left">
-        <div class="resize_bg">';
+      <input type = "submit" onclick = "addElement()" value = "Добавить узел"/>
+      <div id = "text"></div>
+        <div class="resize_bg">
+        <div id = "svg">
+</div>';
 
 if ( $title ) {
   echo '<h2>' . $title . '</h2>';
@@ -46,6 +49,7 @@ if ( $text ) {
   echo $text;
 }
 echo '
+
         </div>
       </div>
       <div class="clr"></div>
