@@ -6,6 +6,7 @@
 <script type="text/javascript" src="/template/js/cufon-yui.js"></script>
 <script type="text/javascript" src="/template/js/arial.js"></script>
 <script type="text/javascript" src="/template/js/cuf_run.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 </head>
 <body>
 <div class="main">
@@ -16,8 +17,8 @@
       </div>
       <div class="menu">
         <ul>';
-      require('template/main_menu.php');
-        echo '</ul>
+require('template/main_menu.php');
+echo '</ul>
       </div>
       <div class="clr"></div>
     </div>
@@ -33,20 +34,27 @@
   <div class="body">
     <div class="body_resize">
       <div class="left">
-      <input type = "submit" onclick = "addElement()" value = "Добавить узел"/>
-      <div id = "text"></div>
+      <input type = "submit" id = "addElement" onclick = "addElement(0)" value = "Добавить узел" style = "display:none;"/>
+      <div style = "display: inline-block;background:white;height:150px;">
+      <div id = "panelForm" style = "margin-left:1px;width:289px;float:left;border:1px solid #97c950;height: 100%;padding:5px;height: 140px;">
+        <input type="radio" onclick="usersClick()" value=""/>Пошаговое построение дерева<br>
+        <input type="radio" onclick="avtomaticTree()" />Автоматическое построение дерева<br>
+        <input type="radio" onclick = "optima()"/>Оптимизированное построение дерева<br>
+      </div>
+      <div id = "text" style = "width:654px;float:right;border:1px solid #11ff50;height: 140px;padding:5px;"></div>
+      </div>
         <div class="resize_bg">
-        <div id = "svg">
+        <div id = "svg" style = "background-image: url(\'/template/images/background.svg\');background-repeat: no-repeat;\">
 </div>';
 
-if ( $title ) {
-  echo '<h2>' . $title . '</h2>';
+if ($title) {
+    echo '<h2>' . $title . '</h2>';
 }
-if ( $image ) {
-  echo '<img alt="" width="455" height="273" scr = "' . $image . '"/>';
+if ($image) {
+    echo '<img alt="" width="455" height="273" scr = "' . $image . '"/>';
 }
-if ( $text ) {
-  echo $text;
+if ($text) {
+    echo $text;
 }
 echo '
 

@@ -417,3 +417,7 @@ p.response {
 	line-height:1.8em;
 	width:auto;
 }
+#text{
+    background: #AAFEaa;
+    font-weight: bold;
+}
