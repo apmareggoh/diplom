@@ -1,0 +1,396 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Сбалансированные по весу деревья есть класс бинарных деревьев, в которых ограничение на высоты поддеревьев заменено ограничением на число вершин в поддеревьях. Эти деревья называют <em>деревьями с ограниченным балансом</em> или <em>ВВ-деревьями</em> [12]. Они базируются на других принципах и не сравнимы со сбалансированными по высоте деревьями (АВЛ-деревья), но они обладают схожими свойствами. От АВЛ-деревьев они отличаются в основном тем, что содержат параметр, который может изменяться так, что компромисс между скоростью поиска и допустимым дисбалансом может быть выбран произвольно. Этот параметр называется <em>балансом </em><img height="19" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="20" />.</p>
+		<p>
+			Пусть <em>T<sub>n</sub></em><em>=(</em><em>T<sub>l</sub></em><em>,</em><em>T<sub>r</sub></em><em>,</em><em>v</em><em>)</em>есть бинарное дерево с корнем <em>v </em>, где <em>T<sub>l</sub></em>и <em>T<sub>r</sub></em>бинарные поддеревья с <em>n<sub>l</sub></em>и <em>n<sub>r</sub></em>вершинами <img height="34" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.png" width="252" />.</p>
+		<p>
+			Корневым балансом бинарного дерева <em>T<sub>n</sub></em>называется величина</p>
+		<p align="center">
+			r(T<sub>n</sub>)=(n<sub>l</sub>+1)/(n+1).</p>
+		<p>
+			Величина корневого баланса всегда лежит в пределах отрезка (0,1) (она указывает на относительное число вершин в правом и левом поддеревьях).</p>
+		<p>
+			Дерево <em>T<sub>n</sub></em> называется бинарным деревом с ограниченным&nbsp; балансом a, 0 &pound;a&pound;1/2 (ВВ-деревом) тогда и только тогда, когда оно удовлетворяет следующим свойствам:</p>
+		<p>
+			<em>T<sub>r</sub></em>и <em>T<sub>l</sub></em>- деревья с ограниченным балансом;</p>
+		<p>
+			a&pound;<em>r</em><em>(</em><em>T<sub>n</sub></em><em>)</em><em>&pound;</em><em>1-</em><em>a</em><em>.</em>.</p>
+		<p>
+			Класс таких деревьев обозначают ВВ[a].</p>
+		<p style="margin-left:4.8pt;">
+			Правда, BB-деревья требуют большую память для каждой вершины для хранения числа вершин поддерева с данной вершиной в качестве корня, но это компенсируется возможностью решения таких задач, как отыскание <em>k-го</em> элемента данных или определение множества слов между словами <em>W<sub>1</sub></em> и W<sub>2</sub> при лексикографическом упорядочении за время <em>O (</em><em>log</em><em>n)</em>, тогда как требуется <em>0(п)</em> времени, если информация о размере деревьев не хранится.</p>
+		<p>
+			Классу <em>BB[1/2] </em>принадлежат только полностью сбалансированные деревья с n=2<sup>h</sup>&mdash;1 вершинами.&nbsp;&nbsp; В примерах на рис. 2.19 баланс каждого поддерева выписан рядом с корнем каждого поддерева; минимум этих балансов &mdash; это максимальное <em>&alpha;</em>, при котором данное дерево принадлежит <em>BB[</em><em>a]. </em>Заметим, что деревья Фибоначчи принадлежат <em>ВВ[1/3].</em></p>
+		<p>
+			Для всех <em>а</em> из интервала 1/3&lt; <em>а</em> &lt;1/2&nbsp;&nbsp; BB[<em>a</em>]=ВВ[1/2].</p>
+		<p>
+			Для любого <em>а</em>, 0&lt;<em>а</em>&lt;1/2, существуют в BВ[<em>a</em>] деревья, не являющиеся АВЛ-деревъями.</p>
+		<p>
+			<img align="left" alt="Подпись:  Рис. 2.19. Баланс различных ВВ-деревьев" height="230" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.png" width="663" />Например, дерево на рис. 2.19,<strong><em>г</em></strong>, которое принадлежит классу ВВ[1/3], но не является сбалансированным по высоте. Аналогичным образом может быть построено такое дерево для заданного <em>а</em>.</p>
+		<p>
+			Сбалансированность по весу и сбалансированность по высоте являются независимыми критериями сбалансированности.</p>
+		<p style="margin-left:4.8pt;">
+			<em>Высота дерева </em><em>T<sub>n</sub> из класса </em><em>BB[</em><em>a] не превышает </em></p>
+		<p style="margin-left:4.8pt;">
+			(log(n+1)-1)/log(1/(1-a))</p>
+		<p style="margin-left:1.3pt;">
+			Для полностью сбалансированных бинарных деревьев (a = 1/2) эта формула дает h<sub>1/2</sub>(n) &raquo;log (n + 1). Для a = 1-(&Ouml;2)/2&mdash; наибольшего значения a, для которого работает описываемый ниже алгоритм перестройки, имеем</p>
+		<p style="margin-left:1.3pt;">
+			<em>h<sub>1-</sub></em><sub>(</sub><sub>&Ouml;2)/2</sub><em>(</em><em>n)</em><em>&raquo;2</em><em>log(</em><em>n+1)+</em><em>O(1).</em></p>
+		<p style="margin-left:2.15pt;">
+			Таким образом, длина самого длинного пути из корня в лист &mdash; высота наиболее асимметричного дерева из ВВ[1-((&Ouml;2)/2)] лишь в два раза больше высоты полностью сбалансированного дерева.</p>
+		<p style="margin-left:2.5pt;">
+			Что касается средней высоты, то в принципе она может быть вычислена аналогично тому, как это делалось для АВЛ-деревьев, если принять во внимание, что суммарная длина внутренних путей в <em>Т<sub>п</sub> </em>удовлетворяет неравенству:</p>
+		<p align="left" style="margin-left:2.5pt;">
+			|T<sub>n</sub>|&pound;1/H(a)(n+1)log(n+1)-2n, гдеH(a) = - aloga- (1 - a) log (1 - a).</p>
+		<p>
+			<strong>Включение новой вершины в ВВ-дерево</strong>. Сопоставим каждой вершине ВB-дерева число<img height="25" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.png" width="35" />, равное числу вершин в поддереве <em>Т(х)</em> с корнем в вершине <em>х</em>. Пусть m есть путь из корня во вновь включенную вершину <em>w</em> ВВ- дерева. Двигаясь по пути m в направлении от корня, проверяем на каждом шагу, нарушит ли добавление вершины баланс дерева; если нет, то добавляем единицу к <img height="34" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image009.png" width="48" />&nbsp;и продолжаем движение. Если же добавление вершины нарушает баланс, то, прежде чем двигаться дальше, проводим необходимые преобразования, тем более что они те же самые, что и для АВЛ-деревьев.</p>
+		<p>
+			Пример включения вершины wв дерево, показанное на рис. 2.19,г, дан на рис. 2.20.</p>
+		<p>
+			<img height="191" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image011.jpg" width="647" /></p>
+		<p align="center">
+			Рис. 2.20. Включение вершины wв дерево, показанное на рис. 2.19г</p>
+		<p align="center">
+			&nbsp;</p>
+		<p>
+			<img alt="Подпись:  
+Рис.2.21. Балансировка ВВ-деревьев
+" height="428" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image013.png" width="633" /><br clear="ALL" />
+			Схемы простого и двойного вращений с указанием новых балансов показаны на рис. 2.21.</p>
+		<p>
+			<strong>Алгоритм включения новой вершины в ВВ-дерево:</strong></p>
+		<p>
+			начало</p>
+		<p>
+			1. найти путь m из новой вершины <em>w</em>в корень;</p>
+		<p>
+			2. упорядочить вершины пути m в направлении от корня; пусть это будет последовательность n<sub>i1</sub>, n<sub>i2</sub>, &hellip;, n<sub>ik</sub></p>
+		<p>
+			3. для j от 1 до <em>k</em>шаг 1 цикл</p>
+		<p>
+			4. начало</p>
+		<p>
+			5. вычисляем баланс <em>v</em> вершины n<sub>ij</sub>&nbsp;по формуле</p>
+		<p>
+			v=(S(левый потомок v<sub>ij</sub>)+1)/(S(v<sub>ij</sub>)+2)</p>
+		<p>
+			6. если&nbsp;&nbsp; <em>w&nbsp;&nbsp; </em>включена&nbsp;&nbsp; в&nbsp;&nbsp; левое&nbsp;&nbsp; поддерево&nbsp;&nbsp;&nbsp; дерева <em>T(</em><em>v<sub>ij</sub>) </em>то</p>
+		<p>
+			7. если a&pound; v&pound;1-a то</p>
+		<p>
+			8. <em><img height="29" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image015.png" width="153" /></em></p>
+		<p>
+			9<em>. </em>иначе если&nbsp; S(v<sub>ij</sub>) = 2 то</p>
+		<p>
+			10. использовать вращение без учета вершины w;</p>
+		<p>
+			11. иначе начало, вычислить значение b &mdash; баланс правого поддерева - с учетом новой вершины w;</p>
+		<p>
+			12. если 1 <em>-</em><em>b</em> <em>&lt; (1-2</em><em>a)/(1-</em><em>a)</em> то</p>
+		<p>
+			13. применить простое вращение</p>
+		<p>
+			14 иначе применить двойное вращение;</p>
+		<p>
+			15. конец</p>
+		<p>
+			16. иначе, если a&pound; n &pound;1-a то</p>
+		<p>
+			17. <em><img height="29" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image017.png" width="146" /></em></p>
+		<p>
+			18. иначе, если <em>S</em>(v<sub>ij</sub>) = 2 то</p>
+		<p>
+			19. использовать простое вращение без учета вершины w;</p>
+		<p>
+			20. иначе&nbsp; вычислить&nbsp;&nbsp; значение b- баланс&nbsp; левого поддерева &mdash; с учетом новой вершины <em>w;</em></p>
+		<p>
+			21. если b <em>&lt; </em>(1 - 2a)/(1 - a) то</p>
+		<p>
+			22. применить простое вращение</p>
+		<p>
+			23. иначе применить двойное вращение;</p>
+		<p>
+			24. конец цикла;</p>
+		<p>
+			конец</p>
+		<p>
+			&nbsp;</p>
+		<p>
+			Удаление вершины из ВВ-дерева происходит аналогично включению. Следуя по пути m, из корня в вершину, подлежащую удалению, уменьшаем на единицу значение <em>S</em><em>(</em><em>x</em><em>) </em>для каждой пройденной вершины. Если при этом дерево становится несбалансированным, то применяем соответствующее преобразование и движемся дальше. Когда мы достигаем вершины <em>x<sub>n</sub></em><em>, </em>которую намерены удалить, может встретиться один из трех случаев. Если x<sub>n</sub>&mdash;лист, то просто удаляем его. Если <em>x<sub>n</sub></em>имеет только одного потомка, соединяем предка вершины <em>x<sub>n</sub></em>ребром с потомком вершины <em>x<sub>n</sub></em>и, таким образом, удаляем вершину <em>x<sub>n</sub></em><em>. </em>Если же вершина <em>x<sub>n</sub></em>имеет двух потомков, то проделываем описанные операции с одним из ее потомков, заботясьо соответствующих изменениях величин <em><img height="25" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.png" width="35" /></em><em>.</em>Если же, проделав все преобразования, мы выяснили, что удалять вершину нет смысла, то исправляем величины <em><img height="25" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.png" width="35" /></em><em>,</em>но не реконструируем дерево.</p>
+		<p>
+			Длина поиска для сбалансированных по высоте деревьев несколько меньше, чем для ВВ-деревьев, но точная оценка среднего числа сравнений неизвестна, в то время как для ВВ-деревьев оценка средней длины поиска определена даже в худшем случае.</p>
+		<p>
+			Ниже для сравнения в табл. 2.1 приведены некоторые эмпирические оценки этих структур.</p>
+		<p>
+			Значительным преимуществом ВВ-деревьев перед АВЛ-деревьями является возможность установления желательного соотношения между временем поиска и временем включения/исключения за счет выбора подходящего баланса (например, когда включения и удаления редки, баланс может быть выбран ближе к 0.29289, а при частом использовании этих операций баланс можно выбрать близким к нулю).</p>
+		<p align="right">
+			Таблица 2.1</p>
+		<table border="1" cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td style="width:180px;">
+						<p>
+							Структура</p>
+					</td>
+					<td style="width:168px;">
+						<p>
+							Число сравнений</p>
+						<p>
+							в худшем случае</p>
+					</td>
+					<td style="width:144px;">
+						<p>
+							Ожидаемое число сравнений</p>
+					</td>
+					<td style="width:156px;">
+						<p>
+							Трудоемкость восстановления баланса</p>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:180px;">
+						<p>
+							АВЛ-деревья</p>
+					</td>
+					<td style="width:168px;">
+						<p>
+							1.44*log(n+1)</p>
+					</td>
+					<td style="width:144px;">
+						<p>
+							log(n+1)+0.25</p>
+					</td>
+					<td style="width:156px;">
+						<p>
+							0(logn)</p>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:180px;">
+						<p>
+							ВВ-деревья</p>
+					</td>
+					<td style="width:168px;">
+						<p>
+							2*log(n+1)</p>
+					</td>
+					<td style="width:144px;">
+						<p>
+							1.05*log(n+1)</p>
+					</td>
+					<td style="width:156px;">
+						<p>
+							0(logn)</p>
+					</td>
+				</tr>
+				<tr>
+					<td style="width:180px;">
+						<p>
+							Полностью сбалансированные деревья (ВВ[1/2])</p>
+					</td>
+					<td style="width:168px;">
+						<p>
+							Log(n+1)</p>
+					</td>
+					<td style="width:144px;">
+						<p>
+							Log(n+1)</p>
+					</td>
+					<td style="width:156px;">
+						<p>
+							0(n)</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			Однако это преимущество ВВ-деревьев компенсируется в нашем случае переходом к АВЛ-деревьям с балансом более единицы. Кроме того, сбалансированное по высоте дерево требует примерно 2 бита памяти на каждую вершину для указания, какое из трех возможных соотношений между высотами поддеревьев возможно (поддеревья равны, левое поддерево больше правого, правое поддерево больше левого). В ВВ-деревьях вершина требует большей памяти, потому что она нужна для хранения размера поддерева с корнем в этой вершине.</p>
+		<p>
+			<strong>Пример 2.10. </strong>Процедуры формирования и редактирования ВВ деревьев.</p>
+		<p>
+			&nbsp;tree insert( typekey key, tree t ) /*** Вставка элемента***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { if( t == NULL ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = NewNode( key, NULL, NULL );&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;weight = 2;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( t-&gt;k == key )</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Error; /*** Вставляемый ключ уже существует ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { if( t-&gt;k &lt; key ) t-&gt;right = insert( key, t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else&nbsp; t-&gt;left&nbsp; = insert( key, t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;weight = wt( t-&gt;left ) + wt( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = checkrots( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			tree <strong>lrot</strong>( tree t ) /*** Левый поворот***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; { tree temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = t;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = t-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;right = t-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;left = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** настроим вес***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;weight = temp-&gt;weight;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;weight = wt( temp-&gt;left ) + wt( temp-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			tree <strong>rrot</strong>( tree t ) /*** Правый поворот***/</p>
+		<p>
+			&nbsp;&nbsp; { tree temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = t;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = t-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;left = t-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;right = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** настроим вес***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;weight = temp-&gt;weight;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;weight = wt( temp-&gt;left ) + wt( temp-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			tree <strong>checkrots</strong>( tree t )</p>
+		<p>
+			/*** проверка на необходимость поворота ***/</p>
+		<p>
+			{ intwl, wll, wr, wrr;</p>
+		<p>
+			&nbsp; if( t != NULL ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; wl = wt( t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; wr = wt( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if( wr &gt; wl ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** требуется левый поворот ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wrr = wt( t-&gt;right-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if( wrr &gt; wl &amp;&amp; 2*wrr &gt;= wr )</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { t = lrot( t );&nbsp; t-&gt;left = checkrots( t-&gt;left ); }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( wr-wrr &gt; wl ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;right = rrot( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = lrot( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;left&nbsp; = checkrots( t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;right = checkrots( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; elseif( wl &gt; wr ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** требуется правый поворот ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wll = wt( t-&gt;left-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if( wll &gt; wr &amp;&amp; 2*wll &gt;= wl )</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { t = rrot( t );&nbsp; t-&gt;right = checkrots( t-&gt;right ); }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( wl-wll &gt; wr ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;left&nbsp; = lrot( t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;t = rrot( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;left&nbsp; = checkrots( t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;right = checkrots( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp; return( t );</p>
+		<p>
+			}</p>
+		<p>
+			tree <strong>delete</strong>( typekey key, tree t ) /*** Удаление элемента***/</p>
+		<p>
+			&nbsp; { if( t == NULL ) Error; /*** ключ не найден***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** поиск ключа, который нужно удалить ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if( t-&gt;k &lt; key ) t-&gt;right = delete( key, t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( t-&gt;k &gt; key ) t-&gt;left&nbsp; = delete( key, t-&gt;left );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** ключ найден, удалить, если потомков нет ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( t-&gt;left&nbsp; == NULL ) t = t-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( t-&gt;right == NULL ) t = t-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** если есть потомки, то выполняем поворот ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if( wt( t-&gt;left ) &gt; wt( t-&gt;right ) )</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { t = rrot( t );&nbsp; t-&gt;right = delete( key, t-&gt;right ); }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { t = lrot( t );&nbsp; t-&gt;left&nbsp; = delete( key, t-&gt;left ); }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*** перестраиваем информацию о весе ***/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if( t != NULL ) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t-&gt;weight = wt( t-&gt;left ) + wt( t-&gt;right );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t = checkrots( t );</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; return( t );</p>
+		<p>
+			&nbsp; }</p>
+	</body>
+</html>

@@ -1,0 +1,1076 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Красно-чёрные деревья (RB-деревья) - один из типов двоичных &laquo;сбалансированных&raquo; деревьев поиска, вершины которого разделены на красные (red) и чёрные (black) и которые обладает следующими свойствами (будем называть их<strong>RB-свойствами</strong>):</p>
+		<p>
+			1) каждая вершина&mdash;либо красная, либо чёрная;</p>
+		<p>
+			2) каждый лист (nil) &mdash; чёрный;</p>
+		<p>
+			3) у красной вершины оба ребёнка чёрные;</p>
+		<p>
+			4) все пути от корня к листьям содержат одинаковое количество чёрных вершин.</p>
+		<p>
+			Количество черных вершин от листа до заданной вершины (саму вершину не учитываем) будем называть <em>черной высотой вершины</em>, а количество черных вершин от листа до корня будем называть <em>черной высотой дерева</em>. Пример красно-чёрного дерева дан на рис. 2.22. Чёрные вершины показаны как квадратные, красные - как круглые. Около каждой вершины (кроме листьев) записана её чёрная высота. Чёрная высота листьев равна 0. Специальные операции балансировки гарантируют, что глубины любых двух листьев отличаются не более чем в два раза.</p>
+		<p>
+			<img align="left" alt="Подпись:  
+Рис. 2.22.   Красно-чёрное дерево
+" height="268" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="640" /><img height="28" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image003.png" width="29" />Красно-чёрное дерево с n внутренними вершинами (т. е. не считая mL-листьев) имеет высоту не больше 2log(n+1) [11].</p>
+		<p>
+			Каждая вершина красно-чёрного дерева имеет поля <em>color</em> (цвет), <em>key</em> (ключ), <em>left</em> (левый ребёнок), <em>right</em> (правый ребёнок) и <em>р</em> (родитель). Если у вершины отсутствует ребёнок или родитель, соответствующее поле содержит nil. Для удобства мы будем считать, что значения nil, хранящиеся в полях <em>left</em> и <em>right, </em>являются ссылками на дополнительные (фиктивные) листья дерева. В таком пополненном дереве каждая старая вершина (содержащая ключ) имеет двух детей, и тем самым становится внутренней вершиной.</p>
+		<p>
+			<strong>Пример 2.11</strong>. Структура узла RB-дерева.</p>
+		<p>
+			typedefintT;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Тип узла для балансировки*/</p>
+		<p>
+			#define compLT(a,b) (a &lt; b)</p>
+		<p>
+			#define compEQ(a,b) (a == b)</p>
+		<p>
+			typedef enum { BLACK, RED } nodeColor;</p>
+		<p>
+			typedef struct Node_ {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *left;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* левый ребенок*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *right;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* правый ребенок*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *parent;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* родитель*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; nodeColor color;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* цвет узла(BLACK, RED) */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Tdata;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* поле данных узла */</p>
+		<p>
+			} Node;</p>
+		<p>
+			#defineNIL &amp;sentinel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* дополнительные (фиктивные) листья */</p>
+		<p>
+			Node sentinel = { NIL, NIL, 0, BLACK, 0};</p>
+		<p>
+			Node *root = NIL;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/* корень красно-черного дерева */</p>
+		<p>
+			Операции поиска , поиска минимума, поиска максимума, поиска сына&nbsp; и поиска родителя&nbsp; для красно-чёрных деревьев выполняются за время О(log<sub>2</sub> n). Сложнее обстоит дело с процедурами вставкии удаления.</p>
+		<p>
+			Операции вставки и удаления выполняются на красно-чёрном дереве так же, как и на обычном дереве за время О(log<sub>2</sub> n), но они изменяют дерево, и результат может не обладать RB-свойствами. Чтобы восстановить эти свойства, надо перекрасить некоторые вершины и изменить структуру дерева.</p>
+		<p>
+			<img align="left" alt="Подпись:  
+          Рис. 2.24. Пример действия процедуры LEFT-ROTATE
+" height="436" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image005.png" width="520" /><img align="left" alt="Подпись:  
+Рис. 2.23. Операции вращения на двоичном дереве поиска
+" height="235" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image007.png" width="424" />Мы будем менять структуру с помощью<strong>вращений</strong> (rotations), аналогично вращениям в АВЛ-деревьях. На рис. 2.23 показаны два взаимно обратных вращения: левое и правое. Левое вращение возможно в любой вершине <em>х,</em> правый ребёнок которой (назовем его <em>у)</em> не является листом (nil).</p>
+		<p>
+			Операция right-rotateпреобразует левое дерево в правое, меняя несколько указателей. Правое дерево можно перевести в левое обратной операцией left-rotate. Вершины x и <em>у</em> могут находиться в любом месте дерева. Буквы Т1, Т2 и Т3 обозначают поддеревья. В обоих деревьях выполнено свойство упорядоченности: key[Т1] &lt; key[x] &lt; key[Т2] &lt; key[y] &lt; key[Т3]</p>
+		<p>
+			На рис. 2.24 показано действие процедуры left-rotate. Дополнительные nil-листьяне показаны. Порядок ключей в начальном и конечном деревьях один и тот же.</p>
+		<p>
+			<strong>Пример 2.12.</strong> Процедура left-rotate.</p>
+		<p>
+			voidLeft_Rotate (Node *x) {&nbsp;&nbsp; /* поворот узла Х влево */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *y = x-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* устанавливаем для х правый указатель */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;right = y-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;left != NIL) y-&gt;left-&gt;parent = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* устанавливаем для y указатель на родителя */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y != NIL) y-&gt;parent = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (x-&gt;parent) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x == x-&gt;parent-&gt;left)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;left = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;right = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* связываются х и у*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; y-&gt;left = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (x != NIL) x-&gt;parent = y;</p>
+		<p>
+			}</p>
+		<p>
+			<strong>Пример 2.13</strong>. Процедура right-rotateаналогична.</p>
+		<p>
+			void Right_Rotate (Node *x) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /*&nbsp; поворот узла х вправо&nbsp; */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *y = x-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* устанавливаем для х левый указатель */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;left = y-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;right != NIL) y-&gt;right-&gt;parent = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* устанавливаем для y указатель на родителя */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y != NIL) y-&gt;parent = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (x-&gt;parent) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x == x-&gt;parent-&gt;right)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;right = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;left = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* связываются х и у */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; y-&gt;right = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (x != NIL) x-&gt;parent = y;</p>
+		<p>
+			}</p>
+		<p>
+			Добавление вершины в красно-чёрное дерево проводится за время О(log<sub>2</sub> n). Сначала мы применяем процедуру обычной вставки для двоичных деревьев и красим новую вершину в красный цвет. После этого надо восстановить RB-свойства, для чего приходится перекрасить некоторые вершины и произвести вращения. При этом возможны различные ситуации.</p>
+		<p>
+			Мы будем предполагать, что во всех рассматриваемых нами красно-чёрных деревьях корень чёрный, и поддерживать это свойство.</p>
+		<p>
+			<img align="left" alt="Подпись:  Рис. 2.25. Случай 1. Нарушено свойство 3: х и его родитель—красные" height="472" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image009.png" width="602" />Восстановление RB-свойств начинается циклом&nbsp; проверки этих свойств:</p>
+		<p>
+			1. Находится пара х-Р[x], нарушающая RB-свойства.</p>
+		<p>
+			2. Определяется &ldquo;дядя&rdquo; вершины х &ndash; вершина Y.</p>
+		<p style="margin-left:35.45pt;">
+			3. Если вершина Y красная, имеет место случай 1, если чёрная&mdash;то один из случаев 2 или 3.</p>
+		<p>
+			Случай 1. Узлы х, Р[x], Y красные, а P[P[x]] &ndash; черный. В этом случае перекрашиваем узлы P[x] и Y в черный цвет, а P[P[x]] в красный (см. рис. 2.25).</p>
+		<p>
+			В случаях 2 и 3 вершина Y чёрная. Эти два случая различаются тем, каким ребёнком <em>х</em> приходится своему родителю&mdash;левым или правым. Если х правый ребенок, (случай 2), то выполняется левое вращение, которое сводит случай 2 к случаю 3.</p>
+		<p>
+			Случай 3: красная вершина <em>х</em> является левым ребёнком красной вершины <em>р[х],</em> которая является левым ребёнком чёрной вершины р[р[x]], правым ребёнком которой является чёрная вершина Y<em>.</em> В этом случае достаточно произвести правое вращение и перекрасить две вершины, чтобы устранить нарушение RB-свойств. Цикл больше не выполняется, так как вершина <em>р[х]</em> теперь чёрная (рис. 2.26).</p>
+		<p>
+			<img align="left" alt="Подпись:  
+Рис. 2.26.   Случаи 2 и 3 при вставке узла в RB-дерево
+" height="258" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image011.png" width="628" />Как и для случая 1, нарушено свойство 3 красно-чёрных деревьев, так как вершина <em>х</em> и её родитель <em>р[х]</em> - красные. Корни деревьев Т1, Т2, Т3, и Т4&mdash; чёрные; эти деревья имеют одинаковую чёрную высоту. Оба вращения, показанные на рисунке, не меняют число чёрных вершин на пути от корня к листьям. После этого мы выходим из цикла: RB-свойства выполнены всюду.</p>
+		<p>
+			На рис. 2.27 показан пример вставки узла в RB-дерево. Внутри цикла рассматриваются шесть случаев, но три из них симметричны трём другим, различия лишь в том, является ли родитель вершины <em>х</em> левым или правым ребёнком своего родителя.</p>
+		<p>
+			Добавлена вершина <em>х,</em> при этом нарушилось свойство 3: <em>х</em> и его родитель красные. Вершина Y (которую можно назвать &laquo;дядей&raquo; вершины <em>х)</em> красная, поэтому имеем случай 1.</p>
+		<p>
+			<img align="left" alt="Подпись:  Рис. 2.27.   Работа процедуры вставки в RB-дерево." height="412" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image013.png" width="640" />После перекрашивания вершин получается дерево (б). Новая вершина <em>х</em> и её родитель красные, но дядя Y чёрный. Так как <em>х-</em>правый ребёнок, имеет место случай 2.</p>
+		<p>
+			Производится левое вращение, которое дает дерево (в). Теперь уже <em>х</em> является левым ребёнком, и это&mdash;случай 3. После правого вращения получаем корректное красно-чёрное дерево (г).</p>
+		<p>
+			<strong>Пример 2.14.</strong> Процедура&nbsp; добавления вершины&nbsp; в RB-дерево и балансировки:</p>
+		<p>
+			void insertFixup(Node *x) {</p>
+		<p>
+			while (x != root &amp;&amp; x-&gt;parent-&gt;color == RED) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* мы имеем нарушение свойств*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x-&gt;parent == x-&gt;parent-&gt;parent-&gt;left) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Node *y = x-&gt;parent-&gt;parent-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y-&gt;color == RED) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* дядя- красный*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* дядя- черный*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x == x-&gt;parent-&gt;right) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* делаем х левым сыном */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left-rotate (x);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* изменение цвета и вращение */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x-&gt;parent-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Right-rotate (x-&gt;parent-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* зеркальное отражение предыдущего кода */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Node *y = x-&gt;parent-&gt;parent-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y-&gt;color == RED) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* дядя- красный*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* дядя- черный*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x == x-&gt;parent-&gt;left) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Right-rotate (x);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left-rotate (x-&gt;parent-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root-&gt;color = BLACK;</p>
+		<p>
+			}</p>
+		<p>
+			Node *insertNode(T data) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *current, *parent, *x;</p>
+		<p>
+			&nbsp;&nbsp; /*&nbsp; формирование содержания узла и вставка его в дерево*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* поиск места вставки */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; current = root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; parent = 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; while (current != NIL) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (compEQ(data, current-&gt;data)) return (current);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent = current;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current = compLT(data, current-&gt;data) ?</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current-&gt;left : current-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* определение нового узла*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if ((x = malloc (sizeof(*x))) == 0) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; printf (&quot;insufficient memory (insertNode)\n&quot;);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exit(1);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;data = data;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;parent = parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;left = NIL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;right = NIL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* вставка узла в дерево */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if(parent) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(compLT(data, parent-&gt;data))</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent-&gt;left = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent-&gt;right = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; insertFixup(x);</p>
+		<p>
+			&nbsp; &nbsp; return(x);</p>
+		<p>
+			}</p>
+		<p>
+			Как и другие операции, удаление вершины из красно-чёрного дерева требует времени O(logn). Удаление вершины несколько сложнее добавления.</p>
+		<p>
+			Чтобы упростить обработку граничных условий, мы используем фиктивный элемент (по-английски называемый sentinel) вместо NIL. Для красно-чёрного дерева <em>Т</em> фиктивный элемент nil[T] имеет те же поля, что и обычная вершина дерева. Его цвет чёрный, а остальным полям (р, <em>left, </em><em>right</em> и <em>key)</em> могут быть присвоены любые значения. Мы считаем, что в красно-чёрном дереве все указатели nilзаменены указателями на <em>пil[Т].</em></p>
+		<p>
+			Благодаря фиктивным элементам мы можем считать nil-лист,являющийся ребёнком вершины <em>х,</em> обычной вершиной, родитель которой есть <em>х.</em> В принципе можно было бы завести по одной фиктивной вершине для каждого листа, но это было бы напрасной потерей памяти. Чтобы избежать этого, мы используем один элемент <em>пil[Т],</em> представляющий все листы. Однако, когда мы хотим работать с листом&mdash;ребёнком вершины x, надо не забыть выполнить присваивание р[nil[T]]<em>&lt;&mdash;</em> <em>х.</em></p>
+		<p>
+			Вначале применяется процедура обычного удаления из бинарного дерева. После удаления вершины она вызывает вспомогательную процедуру RB-delete-fixup, которая меняет цвета и производит вращения, чтобы восстановить RB-свойства.</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:  
+Рис. 2.28. Четыре возможных случая в основном цикле процедуры восстановления RB-свойств (RB-DELETE-FIXUP)
+" height="580" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="626" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			Четыре возможных случая показаны на рис. 2.28.</p>
+		<p>
+			Прежде чем разбираться с ними детально, посмотрим, как проверить, что преобразования не нарушают свойство 4. Достаточно убедиться, что количество чёрных вершин от корня показанного поддерева до каждого из поддеревьев Т1, Т2, &hellip;., Т6 не изменилось. Так, на рис. 2.28,а, иллюстрирующем случай 1, количество чёрных вершин от корня до каждого из поддеревьев Т1 и Т2 равно 3 как до, так и после преобразования. (Напомним, что вершина <em>х</em> считается за две.) Аналогично, количество чёрных вершин от корня до Т3, Т4, Т5 и Т6 равно 2 до и после преобразования. Случай 1 сводится к случаю 2, 3 или 4, если поменять местами цвета вершин <em>В</em> и <em>D</em> и произвести левое вращение. На рис. 2.28 (б) вершина <em>В</em> может быть и чёрной, и красной. Если она красная, то число чёрных вершин от корня до Т1 (до и после преобразования) равно 2, если чёрная&mdash;то 3. Остальные случаи проверяются аналогично.</p>
+		<p>
+			В случае 2 &laquo;избыток черноты&raquo; в вершине <em>х</em> перемещается вверх по дереву, когда мы делаем <em>D</em> красной и устанавливаем указатель <em>х</em> в <em>В.</em> Если мы попали в случай 2 из случая 1, то цикл завершается, так как вершина <em>В</em> была красной.</p>
+		<p>
+			Чёрные вершины показаны как квадратные, красные показаны круглыми. Двойные кружки на рисунке могут быть и красными, и чёрными. Буквы Т1, Т2, &hellip;, Т6 обозначают произвольные поддеревья.</p>
+		<p>
+			В каждом случае конфигурация слева преобразуется в конфигурацию справа перекрашиванием вершин и/или вращениями. Вершина, на которую указывает <em>х,</em> дважды чёрная. Единственный случай, когда выполнение цикла продолжается, случай 2.</p>
+		<p>
+			Случай 3 сводится к случаю 4, если поменять местами цвета вершин <em>С</em> и <em>D</em> и выполнить правое вращение (рис.2.28,в).В случае 4 можно перекрасить некоторые вершины и выполнить левое вращение (не нарушив RB-свойства) так, что лишний чёрный цвет исчезает, и цикл можно завершить (рис.2.28,г).</p>
+		<p>
+			Итак, рассмотрим все случаи по порядку. Случай 1 (рис. 2.28,а) имеет место, когда вершина <em>w,</em> брат <em>х,</em> красная (в этом случае их родитель, <em>р[х],</em> чёрный). Так как оба ребёнка вершины <em>w </em>чёрные, мы можем поменять цвета <em>w</em> и <em>р[х]</em> и произвести левое вращение вокруг <em>р[х],</em> не нарушая RB-свойств. Вершина <em>х</em> остаётся дважды чёрной, а её новый брат&mdash;чёрный, так что мы свели дело к одному из случаев 2,3 или 4. Если вершина <em>w</em> чёрная, наблюдается один из случаев 2-4. Они различаются между собой цветом детей вершины <em>w.</em></p>
+		<p>
+			В случае 2 (рис. 2.28,б) оба ребёнка вершины <em>w</em> чёрные. Так как вершина <em>w</em> тоже чёрная, мы можем снять чёрную окраску с <em>х</em> (лишнюю) и с <em>w</em> (сделав её красной) и добавить черноту родителю, <em>р[х].</em> После этого продолжим выполнение цикла. Заметим, что если мы попали в случай 2 из случая 1, то вершина <em>р[х]&mdash;</em>красная, поэтому цикл сразу же завершится.</p>
+		<p>
+			В случае 3 (рис. 2.28,в) вершина <em>w</em> чёрная, её левый ребёнок&mdash; красный, а правый&mdash;чёрный. Мы можем поменять цвета <em>w</em> и её левого ребёнка и потом применить правое вращение так, что RB-свойства будут сохранены. Новым братом вершины <em>х</em> теперь будет чёрная вершина с красным правым ребёнком, и мы свели случай 3 к случаю 4.</p>
+		<p>
+			Наконец, в случае 4 (рис.2.28,г) вершина <em>w</em> является чёрной, а её правый ребёнок&mdash;красный. Меняя некоторые цвета и производя левое вращение вокруг <em>р[х],</em> мы можем удалить лишнюю черноту у <em>х,</em> не нарушая RB-свойств. Присваивание <em>х</em> &lt;&mdash; <em>root[</em><em>T]</em> выводит нас из цикла.</p>
+		<p>
+			<strong>Пример 2.15.</strong> Процедура удаления узла из RB-дерева.</p>
+		<p>
+			void deleteNode(Node *z) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *x, *y;</p>
+		<p>
+			&nbsp;&nbsp; /*удаление узла z из дерева*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (!z || z == NIL) return;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (z-&gt;left == NIL || z-&gt;right == NIL) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* у имеет нулевого сына */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = z;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* найти преемника дерева,&nbsp; являющегося нулевым сыном */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = z-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (y-&gt;left != NIL) y = y-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* x единственный сын узла у */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;left != NIL)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = y-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = y-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* перенести у из родительской ветви */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;parent = y-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;parent)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y == y-&gt;parent-&gt;left)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;parent-&gt;left = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;y-&gt;parent-&gt;right = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y != z) z-&gt;data = y-&gt;data;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;color == BLACK)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; deleteFixup (x);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; free (y);</p>
+		<p>
+			}</p>
+		<p>
+			Node *findNode(T data) {</p>
+		<p>
+			&nbsp;&nbsp; /* найти узел содержащий заданный ключ */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *current = root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; while(current != NIL)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(compEQ(data, current-&gt;data))</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return (current);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current = compLT (data, current-&gt;data) ?</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current-&gt;left : current-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; return(0);</p>
+		<p>
+			}</p>
+		<p>
+			Посмотрим, как процедура rb-delete-fixupвосстанавливает RB-свойства дерева.</p>
+		<p>
+			<strong>Пример 2.16.</strong> Процедура сохранения свойств RB-дерева.</p>
+		<p>
+			voidRBdeleteFixup(Node *x) {</p>
+		<p>
+			&nbsp;&nbsp; /* балансировка после удаления узла х */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; while (x != root &amp;&amp; x-&gt;color == BLACK) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (x == x-&gt;parent-&gt;left) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Node *w = x-&gt;parent-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;color == RED) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left-rotate (x-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w = x-&gt;parent-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;left-&gt;color = BLACK &amp;&amp; w-&gt;right-&gt;color = BLACK) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;right-&gt;color == BLACK) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;left-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Right-rotate (w);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w = x-&gt;parent-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = x-&gt;parent-&gt;color;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;right-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left-rotate (x-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Node *w = x-&gt;parent-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;color == RED) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Right-rotate (x-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w = x-&gt;parent-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;right-&gt;color = BLACK &amp;&amp; w-&gt;left-&gt;color = BLACK) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (w-&gt;left-&gt;color == BLACK) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;right-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = RED;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left-rotate (w);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w = x-&gt;parent-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;color = x-&gt;parent-&gt;color;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;parent-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w-&gt;left-&gt;color = BLACK;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Right-rotate (x-&gt;parent);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;color = BLACK;</p>
+		<p>
+			}</p>
+		<p>
+			Если удалённая вершина <em>у</em> была чёрной, то любой путь, через неё проходивший, теперь содержит на одну чёрную вершину меньше. Таким образом, свойство 4 нарушилось. Мы можем компенсировать это за счёт вершины <em>х,</em> занявшей место вершины <em>у.</em> Если <em>х&mdash;</em>красная, сделаем её чёрной (заодно мы избегаем опасности получить красную вершину с красным родителем). Если <em>х&mdash;</em>чёрная, объявим её &laquo;дважды чёрной&raquo; и будем считать за две при подсчёте числа чёрных вершин на пути от корня к листьям. Конечно, такой выход может быть лишь временным, поскольку определение красно-чёрных деревьев не предусматривает дважды чёрных вершин, и мы должны постепенно от такой вершины избавиться.</p>
+		<p>
+			Процедура RB-DELETE-FIXUP(T,x) применяется к дереву, которое обладает свойствами красно-чёрного дерева, если учесть дополнительную единицу черноты в вершине х, и превращает его в настоящее красно-чёрное дерево. В цикле дерево меняется, и значение переменной <em>х</em> тоже меняется (выделенная вершина может сдвигаться вверх по дереву), но сформулированное свойство остаётся верным.</p>
+		<p>
+			Цикл завершается, если</p>
+		<p>
+			1)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>х</em> указывает на красную вершину (тогда мы красим её в чёрный цвет);</p>
+		<p>
+			2)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <em>х</em> указывает на корень (тогда лишняя чернота может быть просто удалена из дерева);</p>
+		<p>
+			3) внутри тела цикла удаётся выполнить несколько вращений и перекрасить несколько вершин, после чего дважды чёрная вершина исчезнет, в этом случае присваивание <em>х</em> &lt;&mdash; <em>root[</em><em>T]</em> позволяет выйти из цикла.</p>
+		<p>
+			Внутри цикла <em>х</em> указывает на дважды чёрную вершину, не являющуюся корнем. Мы определяем, каким ребёнком является <em>х&mdash;</em>левым или правым. (Подробно выписана часть процедуры для первого случая, второй случай симметричен.) Переменная <em>w</em> указывает на второго ребёнка вершины <em>р[х]</em> (брата вершины <em>х).</em> Так как вершина <em>х&mdash; </em>дважды чёрная, <em>w</em> не может быть равно nil[<em>Т],</em> поскольку в этом случае вдоль одного пути от <em>р[х]</em> вниз (через <em>w)</em> было бы меньше черных вершин, чем вдоль другого (через x).</p>
+		<p>
+			Процедура rb-delete-fixupтребует времени O(logn) (отметим ещё раз, что при этом производится не более трёх вращений).</p>
+		<p>
+			<strong>Динамические множества с сохранением предыдущих версий. </strong>Иногда полезно сохранять предыдущие версии меняющегося множества. (Такие структуры данных называются по-английски persistentdatastructures.) Можно, конечно, копировать множество каждый раз, когда оно изменяется. Но такой подход требует много памяти и времени &mdash; и есть способы, позволяющие сделать это более эффективно.</p>
+		<p>
+			Мы хотим предусмотреть возможность хранения предыдущих версий для множества <em>S</em> с операциями insert, deleteи search. Мы считаем, что множество <em>S</em> реализовано с помощью двоичных деревьев поиска, как показано на рис. 2.29,а. Для каждой версии множества мы храним свой отдельный корень. Чтобы добавить ключ 5, мы создаём новую вершину с этим ключом. Эта вершина становится левым ребёнком новой вершины с ключом 7, так как существующую вершину менять нельзя. Подобным образом новая вершина с ключом 7 становится левым ребёнком новой вершины с ключом 8, правый ребёнок которой&mdash;существующая вершина с ключом 10.</p>
+		<p>
+			В свою очередь, новая вершина с ключом 8 становится правым ребёнком нового корня r<em>&#39;</em> с ключом 4, левый ребёнок которого&mdash;существующая вершина с ключом 3. Таким образом, мы копируем лишь часть дерева, а в остальном используем старое дерево, как это показано на рис. 2.29(б).</p>
+		<p>
+			<img align="left" alt="Подпись:  
+Рис. 2.29. Двоичное дерево поиска с ключами 2,3,4,7,8,10 (а);
+дерево с сохранением предыдущих версий после добавления ключа 5 (б)
+" height="318" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="621" />Мы предполагаем, что вершины дерева содержат поля <em>key, </em><em>left</em> и <em>right,</em> но не содержат поля <em>р,</em> указывающего на родителя.</p>
+		<p>
+			Текущая версия состоит из вершин, доступных из текущего корня r<em>&#39;,</em> а предыдущая версия содержит вершины, доступные из старого корня r. Тёмно-серые вершины добавлены при добавлении ключа 5.</p>
+		<p>
+			<strong>Пример 2.17. </strong>Функция сохранения предыдущей версии динамического множества. Она возвращает указатель на новую версию. Старый корень соответственно становится указателем на предыдущую версию.</p>
+		<p>
+			Note *Save_Old_Version(Note *old_root, int new_key)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;&nbsp; Note *cur=0, *new_root=0, *tmp=0;</p>
+		<p>
+			// создаемновыйкореньсключомстарого</p>
+		<p>
+			&nbsp;&nbsp; new_root=Create_Note(old_root-&gt;val);</p>
+		<p>
+			// создаемновыйузелстребуемымключом</p>
+		<p>
+			&nbsp;&nbsp; tmp=Create_Note(new_key);</p>
+		<p>
+			// делаем новый узел потомком нового корня - это для случая, если у //старого корня нет соответствующего (правого/левого поддерева)</p>
+		<p>
+			&nbsp;&nbsp; if (old_root-&gt;val &lt; new_key)</p>
+		<p>
+			&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; new_root-&gt;left=old_root-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; new_root-&gt;right=tmp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; cur=old_root-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; new_root-&gt;right=old_root-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; new_root-&gt;left=tmp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; cur=old_root-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp; }</p>
+		<p>
+			//проходим старое дерево от корня вниз, ища место для вставки //нового узла одновременно создаем новое дерево !!!новый узел //вставляется в новое дерево &ndash; старое остается без изменений!!!</p>
+		<p>
+			&nbsp;&nbsp; while(cur)</p>
+		<p>
+			&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; if (new_key &gt; cur-&gt;val)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;left=cur-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;right=cur-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;val=cur-&gt;val;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;cur=cur-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;right=New_Note(new_key);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp=tmp-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; if (new_key &lt; cur-&gt;val)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;left=cur-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;right=cur-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;val=cur-&gt;val;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;cur=cur-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp-&gt;left=New_Note(new_key);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;tmp=tmp-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; }</p>
+		<p>
+			&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp; return new_root;</p>
+		<p>
+			&nbsp;</p>
+		<p style="margin-left:.3pt;">
+			<strong>Деревья промежутков. </strong>Используем красно-чёрные деревья для хранения меняющегося множества промежутков. Отрезком (closedinterval) [t<sub>1</sub>,t<sub>2</sub>] называется множество вещественных чисел t, для которых t<sub>1</sub> <strong>&pound; </strong>t<strong>&pound;</strong> t<sub>2</sub>. (Предполагается, что t<sub>1</sub> <strong>&pound;</strong>t<sub>2</sub>). Полуинтервал (half-openinterval) и интервал (openinterval) получаются из отрезка выкидыванием одного или двух концов соответственно. Здесь мы имеем дело только с отрезками, но все результаты легко распространяются на интервалы и полуинтервалы.</p>
+		<p>
+			Представим себе базу данных, в которой хранится информация о протяжённых во времени событиях: для каждого события хранится промежуток времени, которое оно занимает. Рассматриваемая структура данных позволяет по любому промежутку найти все события, которые пересекаются с этим промежутком, причём делает это достаточно быстро.</p>
+		<p>
+			Считаем, что отрезок [t<sub>1</sub>,t<sub>2</sub>] представляет собой запись i, состоящую из двух полей: low[i] = t<sub>1</sub> (левый конец (lowendpoint)) и high[i] = t<sub>2</sub> (правый конец (highendpoint)). Будем говорить, что отрезки i и i&#39; перекрываются (overlap), если low[i]<strong>&pound;</strong>high[i&#39;] и low[i&#39;]<strong>&pound;</strong> high[i]; иными словами, если i<strong>&Ccedil;</strong> i&#39; <strong>&sup1;</strong> &Oslash;. (Обратите внимание, что отрезки, имеющие общий конец, считаются перекрывающимися.)</p>
+		<p>
+			Всего возможно три варианта взаимного расположения отрезков i и i&#39; (рис. 2.30):</p>
+		<p style="margin-left:17.75pt;">
+			1) отрезки iи i&#39; перекрываются,</p>
+		<p style="margin-left:17.05pt;">
+			2)&nbsp; high[i] &lt; low[i&#39;],</p>
+		<p style="margin-left:17.3pt;">
+			3)&nbsp; high[i&#39;] &lt; low[i].</p>
+		<p>
+			<img align="left" alt="Подпись:  Рис. 2.30. Три варианта взаимного расположения отрезков i и i'" height="248" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.png" width="663" /><em>Деревом промежутков</em>(intervaltree) назовём красно-чёрное дерево, каждая вершина х которого хранит отрезок int[x]. Дерево промежутков позволяет реализовать следующие операции:</p>
+		<p>
+			interval-insert(t, х) добавляет к дереву Т элемент х (содержащий некоторый отрезок int[x]);</p>
+		<p>
+			interval-delete(t, х) удаляет из дерева Т элемент х. Эта операция полностью аналогична операции удаления из RB-дерева;</p>
+		<p>
+			interval-search(t, i) возвращает указатель на элемент х дерева Т, для которого отрезки i и int[x] перекрываются (и возвращает NIL, если такого элемента в дереве нет).</p>
+		<p>
+			Пример дерева промежутков показан на рис. 2.31,а - набор из 10 отрезков (выше тот, у которого левый конец больше). б) - дерево промежутков, хранящее эти отрезки. При этом свойство упорядоченности дерева выполняется для левых концов.</p>
+		<p>
+			Реализуем такую структуру данных и операции на ней.</p>
+		<p>
+			<strong>Шаг 1: </strong>Базовая структура данных: красно-чёрное дерево, каждая вершина х которого содержит отрезок int[x]. Ключом вершины является левый конец отрезка low[int[x]]; обход дерева в порядке &laquo;левое поддерево &mdash; корень &mdash; правое поддерево&raquo;&nbsp;перечисляет вершины в порядке возрастания ключей.</p>
+		<p>
+			<strong>Шаг 2: </strong>Дополнительная информация. Каждая вершина также содержит поле mах[х]. В нем хранится максимальный из правых концов отрезков, содержащихся в поддереве с корнем х.</p>
+		<p>
+			<strong>Шаг 3: </strong>Обновление дополнительной информации. Проверим, что дополнительную информацию можно обновлять при добавлении и удалении элемента без (асимптотического) ухудшения времени работы этих операций. В самом деле, mах[х] = max(high[int[x]], max[left[x]], max[right[x]]). Можно отметить также, что при вращениях поле max<img align="left" alt="Подпись:  
+Рис. 2.31.  Дерево промежутков.
+
+" height="565" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.png" width="676" />можно обновлять за время O(1).</p>
+		<p>
+			<strong>Шаг 4</strong>: Новые операции. Процедура Interval-search(t,i) находит в дереве Т отрезок, перекрывающийся с i. Если такого отрезка нет, она возвращает значение NIL.</p>
+		<p>
+			Note *Interval_Search(Note *root, int Begin, int End)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;&nbsp; Note*cur=root;</p>
+		<p>
+			&nbsp;&nbsp; while(1)</p>
+		<p>
+			&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // проверка условия перекрытия отрезков</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; if ((cur-&gt;begin &lt;= End) &amp;&amp; (cur-&gt;end &gt;= Begin))</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;returncur;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если отрезки не перекрываются</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;if (cur-&gt;max &gt; Begin)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;{</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // переход поиска в левое поддерево</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(cur-&gt;left) cur=cur-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // достигнут конец дерева</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elsereturnNULL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;if(cur-&gt;max&lt; Begin)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;{</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // переход поиска в правое поддерево</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (cur-&gt;right) cur=cur-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // достигнут конец дерева&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; elsereturnNULL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;} // if</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; } // else</p>
+		<p>
+			&nbsp;&nbsp; } // while</p>
+		<p>
+			} // Interval-Search()</p>
+		<p style="margin-left:.25pt;">
+			Мы ищем отрезок, проходя дерево от корня к листу. Процедура останавливается, если отрезок найден или если значение переменной х стало равным NIL. Поэтому время работы процедуры пропорционально высоте дерева (и равно O(logn) для дерева из n вершин).</p>
+		<p>
+			Для примера посмотрим, как процедура Interval-searchищет в дереве на рис. 2.31 отрезок, перекрывающийся с отрезком i = [22,25]. Мы начинаем с корня (х = root[T}), который хранит отрезок [16,21], не перекрывающийся с г. Так как max[left[x]] = 23, что больше, чем low[i] = 22, то мы переходим к левому ребёнку корня (х &lt;&mdash; left[x]). Этот ребёнок хранит отрезок [8,9], также не перекрывающийся с i. На этот раз max[left[x]] = 10 меньше low[i] = 22, поэтому мы переходим к правому ребёнку вершины х. Там находится отрезок [15,23], перекрывающийся с i, и поиск завершается.</p>
+		<p style="margin-left:.25pt;">
+			Рассмотрим пример безрезультатного поиска в том же дереве &mdash; будем искать отрезок, перекрывающийся с i = [11,14]. Снова начинаем с корня. Корень хранит отрезок [16,21], не перекрывающийся с i. Так как max[left[x]] = 23 больше low[i] = 11, переходим к левому ребёнку. Теперь в х хранится отрезок [8,9]. Он не перекрывается с i, и max[left[x]] = 10 меньше low[i] &mdash; 11, поэтому идём направо. (Слева искомого отрезка быть не может). В х теперь хранится [15,23], с i этот отрезок не перекрывается, left[x] = nil, поэтому идём направо и возвращаем значение NIL.</p>
+		<p style="margin-left:.5pt;">
+			Корректность процедуры interval-searchустанавливает теорема, которая утверждает, что если отрезки int[x] и i не перекрываются, то дальнейший поиск идёт в правильном направлении (если нужные отрезки вообще есть в дереве, то они есть и в выбираемой части дерева). Поэтому нам достаточно просмотреть всего один путь. (Обратите внимание, что слова &laquo;правильное направление&raquo; не означают, что в другом направлении искомых отрезков нет: мы утверждаем лишь, что если они есть вообще, то есть и в &laquo;правильном&raquo; направлении!)</p>
+		<p>
+			<strong>Пример 2.18.</strong>Процедуры формирования и редактирования дерева промежутков.</p>
+		<p>
+			// добавление узла в дерево промежутков и балансировка</p>
+		<p>
+			// top&ndash; указатель на вершину дерева</p>
+		<p>
+			// begin&ndash; левый конец вставляемого отрезка</p>
+		<p>
+			// end &ndash; правыйконец</p>
+		<p>
+			Note *Interval_Insert(Note *Top, int Begin, int End)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp; Note **CurNote = &amp;Top, *Parent = NULL, *x, *y;</p>
+		<p>
+			&nbsp; boolLeft= true;</p>
+		<p>
+			&nbsp; // поиск места для вставки узла в дерево</p>
+		<p>
+			&nbsp; while(*CurNote)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Parent = *CurNote;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if(Begin &lt; (*CurNote)-&gt;Begin)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CurNote = &amp;((*CurNote)-&gt;Left);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left = true;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CurNote = &amp;((*CurNote)-&gt;Right);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Left = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			<strong>// </strong>созданиеновогоузла</p>
+		<p>
+			&nbsp; *CurNote = Create_Note(Begin, End, Parent, Left);&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			<strong>// </strong>балансировка дерева для восстановления красно-черных свойств</p>
+		<p>
+			&nbsp; x = *CurNote;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; while((x != Top) &amp;&amp; x-&gt;Parent-&gt;Red)</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if(x-&gt;Parent-&gt;IsLeft)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = x-&gt;Parent-&gt;Parent-&gt;Right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(y-&gt;Red)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;Red = true;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;Parent-&gt;Parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(!x-&gt;IsLeft)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;Parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;LeftRotation();</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;Red = true;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;RightRotation();</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = x-&gt;Parent-&gt;Parent-&gt;Left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(y-&gt;Red)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;Red = true;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;Parent-&gt;Parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(x-&gt;IsLeft)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = x-&gt;Parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;RightRotation();</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Red = false;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;Red = true;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x-&gt;Parent-&gt;Parent-&gt;LeftRotation();</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			&nbsp; Top-&gt;Red = false;</p>
+		<p>
+			&nbsp; returnTop;</p>
+		<p>
+			}</p>
+		<p>
+			//АВЛ-&ndash; вращения</p>
+		<p>
+			// левое вращение</p>
+		<p>
+			Note*LeftRotation(Note*top)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp; // проверка возможности поворота</p>
+		<p>
+			&nbsp; if(!top-&gt;Right)</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; ShowMessage(&quot;Bug!!!&quot;);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Return top;</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			// собственновращение</p>
+		<p>
+			&nbsp; if(top-&gt;IsLeft)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Left = top-&gt;Right;</p>
+		<p>
+			&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Right = top-&gt;Right;</p>
+		<p>
+			&nbsp; top-&gt;Right-&gt;Parent = top-&gt;Parent;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; top-&gt;Parent = top-&gt;Right;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; if(top-&gt;Right-&gt;Left)</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Right-&gt;Left-&gt;Parent = top;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Right = top-&gt;Right-&gt;Left;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Right-&gt;IsLeft = false;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Right = NULL;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Left = top;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;IsLeft = top-&gt;IsLeft;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;IsLeft = true;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			}</p>
+		<p>
+			//// правоевращение</p>
+		<p>
+			Note *RightRotation(Note *top)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;&nbsp; // проверка возможности поворота</p>
+		<p>
+			&nbsp; if(!top-&gt;Left)</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; ShowMessage(&quot;Bug!!!&quot;);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; return;</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			&nbsp; // собственновращение</p>
+		<p>
+			&nbsp; if(top-&gt;IsLeft)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Left = top-&gt;Left;</p>
+		<p>
+			&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Right = top-&gt;Left;</p>
+		<p>
+			&nbsp; top-&gt;Left-&gt;Parent = top-&gt;Parent;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; top-&gt;Parent = top-&gt;Left;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; if(top-&gt;Left-&gt;Right)</p>
+		<p>
+			&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Left-&gt;Right-&gt;Parent = top;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Left = top-&gt;Left-&gt;Right;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Left-&gt;IsLeft = true;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp; }</p>
+		<p>
+			&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Left = NULL;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;Parent-&gt;Right = top;</p>
+		<p>
+			&nbsp; &nbsp; top-&gt;Parent-&gt;IsLeft = top-&gt;IsLeft;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; top-&gt;IsLeft= false;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			}</p>
+	</body>
+</html>

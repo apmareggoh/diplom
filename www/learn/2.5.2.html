@@ -1,0 +1,587 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Операции редактирования нарушают балансировку двоичного дерева. Балансировка дерева - сложная операция,&nbsp; поэтому на&nbsp; практике широко применяются&nbsp; бинарные&nbsp; деревья,&nbsp; которые используют менее строгий критерий&nbsp; сбалансированности&nbsp; (АВЛ-деревья),&nbsp; предложенный Адельсоном-Вельским и Ландисом [10].</p>
+		<p>
+			В соответствии с их определением <em>бинарное дерево называется сбалансированным, если высота левого поддерева каждого узла отличается от высоты правого поддерева не более чем на 1.</em></p>
+		<p>
+			Эти деревья называются в честь этих математиков АВЛ-деревьями, или просто сбалансированными деревьями.</p>
+		<p>
+			Полностью сбалансированные деревья являются частным случаем &laquo;сбалансированных деревьев&raquo;.</p>
+		<p>
+			Дадим следующее определение &ldquo;показателю сбалансированности&rdquo; узлов для деревьев произвольной структуры: <em>(показатель сбалансированности узла) = (высота правого поддерева этого узла)&mdash;(высота левого поддерева этого узла).</em></p>
+		<p>
+			В АВЛ-дереве показатель сбалансированности всех узлов равен или -1, или 0, или +1. В полностью сбалансированном дереве для всех узлов, за исключением максимум одного узла, показатель сбалансированности равен нулю. Если для всех узлов, за исключением листьев, показатель сбалансированности равен +1 или &ndash;1, то такое дерево называется <em>деревом Фибоначчи</em>.</p>
+		<p>
+			Дерево Фибоначчи высоты 6 показано на рис. 2.11. Как ясно из сказанного выше, АВЛ-дерево высоты <em>h</em> есть дерево с наименьшим числом узлов <em>п,</em> высота которого почти равна log<sub>2</sub>n<em>.</em> Можно дать и более точную оценку <em>h:</em></p>
+		<p>
+			1,4404 log<sub>2</sub> (n+2)- 0,328 &gt; <em>h</em> &gt; log<sub>2 </sub>(n + 1)</p>
+		<p align="left">
+			<img align="left" alt="Подпись:  Рис. 2.11. Дерево Фибоначчи. Показатель сбалансированности узлов равен -1 (кроме листьев)
+
+" height="290" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="460" />Между полностью сбалансированными деревьями и деревьями Фибоначчи располагаются самые разные сбалансированные деревья.</p>
+		<p>
+			В общем случае показатели сбалансированности узлов АВЛ-дерева могут быть разными, как показано на рис. 2.12.</p>
+		<p>
+			АВЛ-дерево представляет собой структуpy, для которой любая операция поиск, вставка и удаление ключа имеет временную сложность O(log<sub>2</sub>n).</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:  
+
+Рис. 2.12. Пример АВЛ-дерева. Числами в кружках (внутренних узлах) показаны значения ключей, цифрами рядом с кружками — показатели сбалансированности
+" height="345" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.png" width="638" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			Теперь попробуем произвести вставку новых ключей в АВЛ-дерево. Если вставку новых ключей производить в дерево, показанное на рис. 2.12, то вставляемый ключ займет место одного из внешних узлов дерева а, b<em>,</em> ..., u<em>,</em> который станет после вставки внутренним узлом дерева. При этом могут наблюдаться следующие случаи:</p>
+		<p>
+			1. Случай с. Показатель сбалансированности улучшается.</p>
+		<p>
+			2.Случаиh, i, j, k, l, m.<em>.</em>&nbsp;Показатель сбалансированности ухудшается, но свойства АВЛ-дерева сохраняются.</p>
+		<p>
+			3. Все остальные случаи, за исключением указанных в 1 и 2, нарушают свойства АВЛ-дерева. Появляются узлы с показателем сбалансированности +2 или &mdash;2, и для сохранения свойства сбалансированности АВЛ-дерева потребуется некоторая корректировка структуры дерева.</p>
+		<p>
+			Из трех указанных выше случаев ситуации 1 и 2 проблемы не составляют. Посмотрим, как следует изменить структуру дерева в случае 3, чтобы восстановить свойство сбалансированности АВЛ-дерева.</p>
+		<p>
+			Например, пусть вставляется ключ со значением &ldquo;1&rdquo;. Часть структуры дерева после вставки вместе с показателями сбалансированности узлов показана на рис. 2.13, а. Здесь показатель сбалансированности узла &ldquo;4&rdquo; окажется равным &mdash;2, и условия АВЛ-дерева перестанут удовлетворяться. Попробуем восстановить баланс АВЛ-дерева, производя корректировку его структуры в пределах этого поддерева. Вместо узла &ldquo;4&rdquo; корнем этого поддерева можно сделать узел &ldquo;2&rdquo;, совершив поворот узлов &ldquo;2&rdquo; и &ldquo;4&rdquo; направо.</p>
+		<p>
+			<img align="left" alt="Подпись:   
+     а)                 б)                в)  
+Рис. 2.14. Вставка ключа “3”
+
+" height="231" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.png" width="316" /><img align="left" alt="Подпись:   
+   а)                          б)
+Рис. 2.13. Вставка ключа “1”
+" height="203" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.png" width="324" />Что произойдет, если в исходное дерево вставить ключ не со значением &ldquo;1&rdquo;, а со значением &ldquo;3&rdquo;?</p>
+		<p>
+			В этом случае восстановить баланс будет несколько сложнее. Вначале повернем налево узлы &ldquo;2&rdquo; и &ldquo;3&rdquo;, как показано на рис. 2.14 а), и получим структуру, показанную на рис. 2.14 б), которая аналогична структуре на рис. 2.13,а. Теперь, если узлы &ldquo;3&rdquo; и &ldquo;4&rdquo; повернуть направо, то участок дерева окажется сбалансированным, как показано на рис. 2.14 в).</p>
+		<p>
+			Рассмотрим теперь случай, когда производится вставка ключа &ldquo;7&rdquo;. В этом случае (рис. 2.15,а) вблизи вставленного узла сбалансированность сохраняется.</p>
+		<p>
+			Однако результат вставки сказывается выше&mdash;для узла &ldquo;14&rdquo;, показатель сбалансированности для которого становится равным &mdash;2. Поскольку при этом узел &ldquo;14&rdquo; находится точно в таком же положении по отношению к узлу &ldquo;10&rdquo;, как и узел &ldquo;4&rdquo; по отношению к узлу &ldquo;2&rdquo; на рис. 2.13, то, если совершить аналогичный поворот направо, получим сбалансированный участок, как показано на рис. 2.15,б. Однако при <img align="left" alt="Подпись:          
+         a)                                          б)
+Рис. 2.15. Вставка ключа “7”
+" height="256" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image011.png" width="412" />этом кроме поворота, показанного на рис. 2.13, потребуется узел &ldquo;12&rdquo; открепить от узла &ldquo;10&rdquo; и прикрепить к узлу &ldquo;14&rdquo;. Вставка ключа &ldquo;9&rdquo; приводит почти к такому же эффекту, как и вставка ключа &ldquo;7&rdquo;.</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:  
+               a)                    	         б)        	                   в)
+Рис. 2.16. Вставка ключа «11»
+" height="224" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image013.png" width="590" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			Последовательность действий при вставке ключа &ldquo;11&rdquo; в дерево показана на рис. 2.16 и, по существу, аналогична действиям, показанным на рис. 2.14; только в этом случае также при повороте узел &ldquo;11&rdquo; необходимо открепить от узла 12&rdquo; и прикрепить к узлу &ldquo;10&rdquo;.</p>
+		<p>
+			&nbsp;</p>
+		<p>
+			Вставка ключа &ldquo;13&rdquo; выполняется аналогичным образом.</p>
+		<p>
+			Если попытаться обобщить рассмотренные случаи корректировки структуры дерева с целью балансировки, то получим диаграммы, показанные на рис. 2.17 и 2.18.</p>
+		<p>
+			Если после вставки показатели сбалансированности узлов имеют одинаковый знак и отличаются только на единицу, как для узлов &ldquo;К&rdquo; и &ldquo;J&rdquo; на рис. 2.17, то восстановить баланс дерева можно однократным поворотом (включая одно переприкрепление поддерева), при этом вставка не будет оказывать влияния на другие участки дерева.</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:          
+
+Рис. 2.18. Случай, когда для восстановления баланса требуется два поворота
+" height="256" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image016.png" width="350" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			<img align="left" alt="Подпись:          
+
+Рис. 2.17. Случай, когда для восстановления баланса достаточно одного поворота
+
+
+
+" height="254" hspace="12" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image019.png" width="280" />Если же после вставки показатели сбалансированности имеют разный знак, например как для узлов &ldquo;K<em>&rdquo; </em>и &ldquo;J&rdquo; на рис. 2.18 (т.е. их разница по абсолютной величине равна 3), то можно восстановить баланс дерева двукратными поворотами трех узлов, включая узел &ldquo;J&rdquo; (используя два переприкрепления поддеревьев). В этом случае вставка также не оказывает влияния на другие участки дерева.</p>
+		<p>
+			Укрупненный алгоритм вставки ключа в АВЛ-дерево и балансировки его имеет вид:</p>
+		<p>
+			1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ищем место вставки ключа;</p>
+		<p>
+			2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Вставляем ключ путем изменения указателей у предка;</p>
+		<p style="margin-left:45.0pt;">
+			3.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Проверяем балансировку узлов (при сбалансированных узлах &ndash; выход);</p>
+		<p>
+			4.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; При разбалансировке узлов выявляем необходимость:</p>
+		<p style="margin-left:45.0pt;">
+			- одного вращения, выполняем эту операцию и переходим к шагу 3;</p>
+		<p style="margin-left:45.0pt;">
+			- двух вращений, выполняем эти операции и переходим к шагу 3;</p>
+		<p>
+			Итак, все случаи, в которых после вставки необходима дополнительная балансировка для сохранения свойств АВЛ-дерева, ограничиваются случаями, показанными на рис. 2.17 и 2.18, и случаями зеркального отражения этих структур. Приведенный анализ показывает принципиальную возможность вставки с сохранением структуры АВЛ-дерева.</p>
+		<p>
+			Операция удаления узла из АВЛ-дерева состоит из удаления как в обычном бинарном дереве, и балансировке АВЛ-дерева, как было рассмотрено ранее при вставке.</p>
+		<p>
+			Для оценки эффективности поиска со вставкой, при условии, что все вставляемые ключи поступают в случайном порядке, потребуется ответить на следующие вопросы:</p>
+		<p>
+			1. Как зависит математическое ожидание значения высоты от общего числа узлов n в дереве?</p>
+		<p>
+			2. Какова вероятность возникновения случаев, не требующих дополнительной балансировки, случаев, требующих однократного поворота, и случаев, требующих двукратного поворота соответственно?</p>
+		<p>
+			3. Как зависит число операций при вставке одного узла от длины пути, ведущего из внешнего узла вверх, и от числа узлов n в дереве?</p>
+		<p>
+			До сих пор не удалось дать точных ответов на эти вопросы. Однако сочетание некоторых теоретических рассуждений и эмпирических результатов позволяет сделать следующие утверждения:</p>
+		<p>
+			1. Математическое ожидание значения высоты при больших n близко к значению log<sub>2</sub>n + 0,25.</p>
+		<p>
+			2. Вероятность того, что при вставке не потребуется дополнительная балансировка, потребуется однократный поворот или двукратный поворот, близка к значениям 2/3, 1/6 и 1/6 соответственно [1].</p>
+		<p>
+			3. Среднее число сравнений при вставке n&ndash;го ключа в дерево выражается формулой alog<sub>2</sub>n + b&nbsp; (a, b - постоянные) [1].</p>
+		<p>
+			Здесь опущены теоретические выкладки, которые доказывают утверждение, что трудоемкость удаления узлов из АВЛ &ndash; дерева также зависит от числа узлов в дереве как log<sub>2</sub>n.</p>
+		<p>
+			Таким образом, АВЛ&ndash;дерево представляет собой структуру, для которой любая операция: поиск, вставка и удаление ключа имеет временную сложность&nbsp; O (log<sub>2</sub>n).</p>
+		<p>
+			<strong>Пример 2.9. </strong>Процедуры формирования и редактирования АВЛ-деревьев.</p>
+		<p>
+			typedefstruct_node//структура листа и узла АВЛ дерева</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; intkey; // ключ узла</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _node*s_left; // указатель на левое поддерево</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _node*s_right; // указатель на правое поддерево</p>
+		<p>
+			} node;</p>
+		<p>
+			node *headTree = NULL; // указатель на корень дерева</p>
+		<p>
+			// процедура добавления к АВЛ дереву листа</p>
+		<p>
+			void addNode(int keyNode, node **node_pointer)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp; node *newnode; // указатель на новый лист</p>
+		<p>
+			&nbsp; // выделяем память под лист</p>
+		<p>
+			&nbsp; newnode= (node*) Malloc(sizeof(node));</p>
+		<p>
+			&nbsp; // инициализируем элементы листа</p>
+		<p>
+			&nbsp; newnode-&gt;s_left= NULL;</p>
+		<p>
+			&nbsp; newnode-&gt;s_right = NULL;</p>
+		<p>
+			&nbsp; newnode-&gt;key = keyNode;</p>
+		<p>
+			&nbsp; *node_pointer= newnode;</p>
+		<p>
+			}</p>
+		<p>
+			// процедура заполняет дерево с корня</p>
+		<p>
+			void makeTree(node *head)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;int&nbsp; temp;</p>
+		<p>
+			&nbsp;node*search;</p>
+		<p>
+			&nbsp;// считываем поэлементно список из чисел и заполняем дерево</p>
+		<p>
+			&nbsp;while(!feof(f)) { // считываем из файла f</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fscanf(f, &quot;%d&quot;, &amp;temp);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // ищем куда вставить новый ключ</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search = head; // поиск начинаем с корня</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (1) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(temp &lt; search-&gt;key){</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (search-&gt;s_left) search=search-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { addNode(temp, &amp;search-&gt;s_left); break; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (search-&gt;s_right) search=search-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { addNode(temp, &amp;search-&gt;s_right); break; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } // endwhile</p>
+		<p>
+			&nbsp;} // endwhile</p>
+		<p>
+			}</p>
+		<p>
+			// процедура строит дерево, начиная с корня</p>
+		<p>
+			void build_AVL_Tree()</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp; int temp;</p>
+		<p>
+			&nbsp; fseek(f, 0, 0);</p>
+		<p>
+			&nbsp; if (feof(f)){ printf(&quot;файлсодержитпустоедерево!&quot;); getch(); exit(1); }</p>
+		<p>
+			&nbsp; fscanf(f, &quot;%d&quot;, &amp;temp);</p>
+		<p>
+			&nbsp; //выделяем память и инициализируем корень дерева</p>
+		<p>
+			&nbsp; headTree = (sheet*)Malloc(sizeof(sheet));</p>
+		<p>
+			&nbsp; headTree-&gt;key = temp;</p>
+		<p>
+			&nbsp; headTree-&gt;s_left = NULL;</p>
+		<p>
+			&nbsp; headTree-&gt;s_right= NULL;</p>
+		<p>
+			&nbsp; //строим дерево начиная с корня</p>
+		<p>
+			&nbsp; MakeTree(headTree);</p>
+		<p>
+			}</p>
+		<p>
+			// процедура находит высоту узла</p>
+		<p>
+			inthigh(node*node);</p>
+		<p>
+			// процедура находит высоту поддерева</p>
+		<p>
+			int high_p(node *node);</p>
+		<p>
+			// процедура проверяет узел дерева на сбалансированность</p>
+		<p>
+			intcheckNode(node*node);</p>
+		<p>
+			// процедура проверяет поддерево на сбалансированность и в случае //расбалансированности возвращает ключ несбалансированного узла, //иначе 0</p>
+		<p>
+			intcheckTree(node*node);</p>
+		<p>
+			// процедура ищет предка для данного ключа</p>
+		<p>
+			// возвращает указатель на структуру предка</p>
+		<p>
+			node* search_rod(intkey_,node*node);</p>
+		<p>
+			// процедура проводит поиск ключа в поддереве</p>
+		<p>
+			node* search(int key_,node *node);</p>
+		<p>
+			// процедура ищет нижний левый элемент поддерева</p>
+		<p>
+			node* search_left(node *node);</p>
+		<p>
+			// процедурадобавляетключдерева</p>
+		<p>
+			void addKey(int temp, node *head)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;&nbsp; node *search;</p>
+		<p>
+			&nbsp;&nbsp; // считываем поэлементно список из чисел и заполняем дерево</p>
+		<p>
+			&nbsp;&nbsp; // ищем, куда вставить новый ключ</p>
+		<p>
+			&nbsp;&nbsp; search = head; // поиск начинаем с корня</p>
+		<p>
+			&nbsp;&nbsp; while (1) {</p>
+		<p>
+			&nbsp;&nbsp; if (temp &lt; search-&gt;key){</p>
+		<p>
+			if (search-&gt;s_left) search=search-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { addNode(temp, &amp;search-&gt;s_left); break; }</p>
+		<p>
+			&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (search-&gt;s_right) search=search-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else { addNode(temp,&amp;search-&gt;s_right); break; }</p>
+		<p>
+			&nbsp;&nbsp; } // endwhile</p>
+		<p>
+			}</p>
+		<p>
+			// процедура удаляет ключ дерева</p>
+		<p>
+			int delKey(int key)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;sheet *node, *node_rod;</p>
+		<p>
+			&nbsp;node = search(key, headTree);</p>
+		<p>
+			&nbsp;node_rod = search_rod(node-&gt;key, headTree);</p>
+		<p>
+			&nbsp;//если у удаляемого узла нет левого поддерева</p>
+		<p>
+			&nbsp;if(!node-&gt;s_left){</p>
+		<p>
+			// если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((node_rod-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node_rod-&gt;s_left = node-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else node_rod-&gt;s_right = node-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;</p>
+		<p>
+			}</p>
+		<p>
+			//если у удаляемого узла нет правого поддерева</p>
+		<p>
+			&nbsp;if(!node-&gt;s_right) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((node_rod-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node_rod-&gt;s_left = node-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else node_rod-&gt;s_right = node-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;</p>
+		<p>
+			}</p>
+		<p>
+			// если удаляемый узел имеет два поддерева</p>
+		<p>
+			// правое поддерево левого потомка перевешиваем на нижний левый //элемент левого поддерева правого потомка удаляемого узла</p>
+		<p>
+			&nbsp;search_left(node-&gt;s_right)-&gt;s_left = (node-&gt;s_left)-&gt;s_right;</p>
+		<p>
+			&nbsp;(node-&gt;s_left)-&gt;s_right = node-&gt;s_right;</p>
+		<p>
+			&nbsp;if (key == headTree-&gt;key) headTree = node-&gt;s_left;</p>
+		<p>
+			&nbsp;else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((node_rod-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node_rod-&gt;s_left = node-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else node_rod-&gt;s_right=node-&gt;s_left;</p>
+		<p>
+			&nbsp;}</p>
+		<p>
+			&nbsp;free(node);</p>
+		<p>
+			}</p>
+		<p>
+			// процедура балансирует узел АВЛ-дерева</p>
+		<p>
+			intbalans(node*node)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;int k, // показатель сбалансированности узла</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; k_p; // показатель сбалансированности поддерева</p>
+		<p>
+			&nbsp;node*temp;</p>
+		<p>
+			&nbsp;if(!node) returnNULL;</p>
+		<p>
+			&nbsp;// считаем показатель сбалансированности поддерева</p>
+		<p>
+			&nbsp;k = high_p(node-&gt;s_right) - high_p(node-&gt;s_left);</p>
+		<p>
+			&nbsp;// если правое поддерево выше левого</p>
+		<p>
+			&nbsp;if(k &gt; 0)</p>
+		<p>
+			&nbsp;{ // считаем показатель сбалансированности поддерева</p>
+		<p>
+			k_p= high_p((node-&gt;s_right)-&gt;s_right) - high_p((node-&gt;s_right)-&gt;s_left);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если k и k_p одного знака</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (k_p &gt;= 0)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = node-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node-&gt;s_right = temp-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_left= node;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (headTree-&gt;key == node-&gt;key) headTree = temp;</p>
+		<p style="margin-left:35.4pt;">
+			else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((search_rod(node-&gt;key, headTree)-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search_rod(node-&gt;key, headTree)-&gt;s_left=temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else search_rod(node-&gt;key, headTree)-&gt;s_right = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else&nbsp; // если к и к_р разных знаков</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = (node-&gt;s_right)-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (node-&gt;s_right)-&gt;s_left = temp-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_right = node-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node-&gt;s_right = temp-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_left= node;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(headTree-&gt;key == node-&gt;key)headTree = temp;</p>
+		<p style="margin-left:35.4pt;">
+			else</p>
+		<p style="margin-left:70.8pt;">
+			if ((search_rod(node-&gt;key, headTree)-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p style="margin-left:70.8pt;">
+			&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search_rod(node-&gt;key, headTree)-&gt;s_left = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else search_rod(node-&gt;key, headTree)-&gt;s_right = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp; } // если левое поддерево выше правого</p>
+		<p>
+			&nbsp; elseif(k&lt; 0) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;// считаемпоказательсбалансированностиподдерева</p>
+		<p>
+			&nbsp;k_p = high_p((node-&gt;s_left)-&gt;s_right) - high_p((node-&gt;s_left)-&gt;s_left);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если к и к_р одного знака</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (k_p &lt; 0) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = node-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node-&gt;s_left = temp-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_right= node;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (headTree-&gt;key == node-&gt;key) headTree = temp;</p>
+		<p style="margin-left:35.4pt;">
+			else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((search_rod(node-&gt;key, headTree)-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search_rod(node-&gt;key, headTree)-&gt;s_left=temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else search_rod(node-&gt;key, headTree)-&gt;s_right = temp;</p>
+		<p>
+			&nbsp; } // endif(k_p&lt; 0)</p>
+		<p>
+			&nbsp; // если к и к_р разных знаков</p>
+		<p>
+			&nbsp; else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp = (node-&gt;s_left)-&gt;s_right;</p>
+		<p>
+			(node-&gt;s_left)-&gt;s_right = temp-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_left = node-&gt;s_left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; node-&gt;s_left = temp-&gt;s_right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; temp-&gt;s_right= node;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // если левый указатель предка указывает на node</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (headTree-&gt;key == node-&gt;key) headTree = temp;</p>
+		<p>
+			else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ((search_rod(node-&gt;key, headTree)-&gt;s_left)-&gt;key == node-&gt;key)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search_rod(node-&gt;key, headTree)-&gt;s_left = temp;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else search_rod(node-&gt;key, headTree)-&gt;s_right = temp;</p>
+		<p>
+			&nbsp; } // end else if (k_p &lt; 0)</p>
+		<p>
+			&nbsp;}//end else if (k &gt; 0)</p>
+		<p>
+			&nbsp;else { printf(&quot;узелсбалансирован&quot;); getch(); exit(1); }</p>
+		<p>
+			}</p>
+		<p>
+			// процедурабалансируетАВЛ-дерево</p>
+		<p>
+			int balansTree(node *node)</p>
+		<p>
+			{</p>
+		<p style="margin-left:36.0pt;">
+			while(checkTree(node))&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p style="margin-left:36.0pt;">
+			//если поддерево несбалансированного узла имеет //несбалансированный&nbsp; узел, то сначала нужно сбалансировать его</p>
+		<p>
+			if (node-&gt;s_right)</p>
+		<p>
+			if (checkTree(node-&gt;s_right)) balans(search(checkTree(node-&gt;s_right), node-&gt;s_right));</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (node-&gt;s_left)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (checkTree(node-&gt;s_left)) balans(search(checkTree(node-&gt;s_left), node-&gt;s_left));</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; balans(search(checkTree(node), node));</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			}</p>
+	</body>
+</html>

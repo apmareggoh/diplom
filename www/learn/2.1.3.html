@@ -1,0 +1,57 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Для представления бинарного дерева достаточен&nbsp; двусвязный список. В отличие от линейного двусвязного списка, двусвязный список&nbsp; для представления бинарного дерева в общем случае не является линейным</p>
+		<p>
+			Рассмотрим представление арифметического выражения (а*b+c)*(d-e/f) в виде дерева.</p>
+		<p>
+			Стандартная форма представления бинарного дерева (рис.2.7) для&nbsp; арифметического выражения (а*b +с) * (d- e/f) приведена&nbsp; на рис. 2.7,б. Каждый узел дерева имеет две ссылки, в которые помещаются связи с левым и правым сыновьями узла соответственно.</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:     
+                  а)                                                      б)
+Рис. 2.7. Представление бинарного дерева в виде списка
+" height="228" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image003.png" width="568" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			<strong>Пример 2.3. </strong>Структура рассматриваемого дерева имеет вид:</p>
+		<p>
+			typedef struct_ListTree{&nbsp;&nbsp; //узелдерева</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; char data;&nbsp; //Данные</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct_ListTree *Right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct_ListTree *Left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } ListTree;</p>
+		<p>
+			typedef struct_BinTree{&nbsp;&nbsp; // Собственнодерево</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int Size;//Числоэлементовдерева</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ListTree *root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ListTree *current;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } BinTree;</p>
+		<p>
+			Преимуществом представления бинарного дерева в связанной&nbsp; памяти, по сравнению с рассмотренным, является&nbsp; гораздо&nbsp; большая&nbsp; гибкость, предоставляемая в использовании узлов различных типов и набора допустимых операций над деревом. Значениями узлов&nbsp; бинарного дерева, реализованного в связанной памяти, могут быть строки&nbsp; символов переменной длины, любые числовые последовательности.</p>
+		<p>
+			Так, использование&nbsp; представления&nbsp; почти&nbsp; полного бинарного дерева в виде массива может привести к&nbsp; большим&nbsp; затратам&nbsp; памяти,&nbsp; когда&nbsp; такое представление используется для организации бинарного дерева поиска для упорядоченных последовательностей.</p>
+	</body>
+</html>

@@ -1,0 +1,229 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Обход бинарного дерева может быть выполнен различными способами. Наиболее часто используются следующие способы обхода:</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1) прямой порядок обхода (обход сверху вниз, нисходящий обход, префиксная запись): обработать корень, обойти левое поддерево, обойти правое поддерево;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2) симметричный порядок обхода (обход слева направо, смешанный обход, инфиксная запись): обойти левое поддерево, обработать корень, обойти правое поддерево;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3) обратный порядок обхода (обход снизу вверх, восходящий обход, постфиксная запись): обойти левое поддерево, обойти правое поддерево, обработать корень.</p>
+		<p>
+			Операции этих обходов рекурсивные.</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Различные обходы бинарного дерева, приведенного на рис. 2.7, дают следующие формы записи исходного выражения:</p>
+		<p style="margin-left:45.0pt;">
+			1)&nbsp; *+*аbс - d/е f- префиксная форма (прямой порядок обхода);</p>
+		<p style="margin-left:45.0pt;">
+			2) (a*b+c)*(d-e/f) - инфиксная форма, в которой приоритет выполнения операций задается структурой дерева (симметричный порядок обхода);</p>
+		<p style="margin-left:45.0pt;">
+			3) ab*c+def/- * - постфиксная форма (обратный порядок обхода).</p>
+		<p>
+			&nbsp;</p>
+		<p>
+			<strong>Пример 2.4.</strong>Процедуры для бинарных деревьев.</p>
+		<p>
+			typedef int T;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+		<p>
+			#define compLT(a,b) (a &lt; b)</p>
+		<p>
+			#define compEQ(a,b) (a == b)</p>
+		<p>
+			&nbsp;</p>
+		<p>
+			typedef struct Node_ {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *left;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*левыйсын*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *right;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* правыйсын*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; struct Node_ *parent;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* родитель*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; T data;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* поледанных*/</p>
+		<p>
+			} Node;</p>
+		<p>
+			Node*root= NULL;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /* Корень бинарного дерева*/</p>
+		<p>
+			Node insertNode(T data) { /*вставкаузла*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node *x, *current, *parent;</p>
+		<p>
+			&nbsp;&nbsp; /*&nbsp;&nbsp;&nbsp; Поисксовставкой*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* найти родителя узла Х */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; current= root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; parent = 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; while (current) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (compEQ(data, current-&gt;data)) return (current);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent = current;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current = compLT(data, current-&gt;data) ?</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current-&gt;left : current-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* создаемновыйузел*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if ((x =(NODE*) malloc (sizeof(NODE))) == 0) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; fprintf (stderr, &quot;insufficient memory (insertNode)\n&quot;);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exit(1);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;data = data;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;parent = parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;left = NULL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; x-&gt;right = NULL;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* вставить узел Х в дерево*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if(parent)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(compLT(x-&gt;data, parent-&gt;data))</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent-&gt;left = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parent-&gt;right = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; return(x);</p>
+		<p>
+			}</p>
+		<p>
+			voiddeleteNode(Node*z) {/*удаление узла по адресу*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node*x, *y;</p>
+		<p>
+			&nbsp;&nbsp; /&nbsp;&nbsp;&nbsp; *Удаление узла из дерева*&nbsp;&nbsp;&nbsp; /</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* Yбудет удален из родительской ветви */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (!z || z == NULL) return;</p>
+		<p>
+			<strong>&nbsp;&nbsp;&nbsp; /* </strong>Поискпреемника</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (z-&gt;left == NULL || z-&gt;right == NULL)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = z;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y = z-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (y-&gt;left != NULL) y = y-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* X- единственный ребенок узла Y*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;left != NULL)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = y-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x = y-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* удаление Yиз родительской цепи*/</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (x) x-&gt;parent = y-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y-&gt;parent)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y == y-&gt;parent-&gt;left)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;parent-&gt;left = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;parent-&gt;right = x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root= x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* Y- узел, который мы удаляем&nbsp; */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* Z- данные, которые мы удаляем */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; /* Если z и y - не одинаковы, то меняем z на y. */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; if (y != z) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;left = z-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y-&gt;left) y-&gt;left-&gt;parent = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;right = z-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (y-&gt;right) y-&gt;right-&gt;parent = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y-&gt;parent = z-&gt;parent;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (z-&gt;parent)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (z == z-&gt;parent-&gt;left)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; z-&gt;parent-&gt;left = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; z-&gt;parent-&gt;right = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; root = y;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; free (z);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; } else {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; free (y);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			}</p>
+		<p>
+			Node *findNode(T data) {/*поискузла*/</p>
+		<p>
+			&nbsp;&nbsp; /*&nbsp; найти узел, содержащий данные&nbsp; */</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; Node*current= root;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; while(current != NULL)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if(compEQ(data, current-&gt;data))</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return (current);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; current = compLT(data, current-&gt;data) ?</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;current-&gt;left : current-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; return(0);</p>
+		<p style="margin-left:18.0pt;">
+			}</p>
+	</body>
+</html>

@@ -1,0 +1,115 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			В общем случае бинарное дерево называется идеальносбалансированным деревом<em>,</em> если все листья находятся на уровне h, либо на уровне h-1, где h&ndash; высота дерева, т.е. почти полное бинарное дерево.</p>
+		<p>
+			Высота идеально сбалансированного бинарного дерева для множества, содержащего nключей, будет минимальна и равна</p>
+		<p>
+			&eacute;log<sub>2</sub>n+1&ugrave;.</p>
+		<p>
+			Обозначение &eacute;<em>х</em>&ugrave;соответствует минимальному целому числу, большему <em>х</em> (&laquo;потолок&raquo; <em>х</em>), a&nbsp; &euml;x&ucirc;&mdash;максимальному целому числу, меньшему <em>х</em> (&laquo;пол&raquo; <em>х</em>) (по К. Е. Иверсону).</p>
+		<p>
+			Сформируем бинарное дерево в виде связного списка с&nbsp; n узлами и минимальной высотой. Значениями узлов будут&nbsp; n&nbsp; чисел, прочитанных из файла.</p>
+		<p>
+			Минимальная высота достигается при максимально возможном числе узлов на каждом уровне, кроме самого нижнего.</p>
+		<p>
+			Правило равномерного распределения узлов при известном их числе можно сформулировать с помощью рекурсии:</p>
+		<p>
+			1.Взять один узел в качестве корня.</p>
+		<p>
+			2.Построить левое поддерево с nl= ndiv2 узлами тем же способом.</p>
+		<p>
+			3.Построить правое поддерево с nr= n-nl-1 узлами тем же способом.&nbsp;</p>
+		<p>
+			<strong>Пример 2.8.</strong>Программа, которая читает входной файл и строит идеально сбалансированное дерево, может иметь вид:</p>
+		<p>
+			typedef struct_ref{</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; int key;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; ref*left, *right} ref;</p>
+		<p>
+			//построение идеально сбалансированного дерева&nbsp; с n&nbsp; узлами</p>
+		<p>
+			ref* tree (int n)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp; ref *newnode;</p>
+		<p>
+			&nbsp; int x, nr;</p>
+		<p>
+			&nbsp; div_t nl;</p>
+		<p>
+			&nbsp; if(n==0)</p>
+		<p>
+			&nbsp;&nbsp; return NULL;</p>
+		<p>
+			&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; nl=div(n,2);&nbsp; nr=n-nl.quot-1;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; cin&gt;&gt;x;</p>
+		<p>
+			&nbsp;&nbsp; newnode=new ref;</p>
+		<p>
+			&nbsp;&nbsp; if(newnode)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newnode-&gt;key=x;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newnode-&gt;left=tree(nl.quot);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newnode-&gt;right=tree(nr);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; else</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cout&lt;&lt;&quot;Ошибка выделения памяти!&quot;&lt;&lt;end;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exit(1);</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp; return newnode;</p>
+		<p>
+			}</p>
+		<p>
+			void main(void)</p>
+		<p>
+			{</p>
+		<p>
+			&nbsp;int n;</p>
+		<p>
+			&nbsp;ref *root;</p>
+		<p>
+			&nbsp;clrscr();</p>
+		<p>
+			//первое целое число есть число узлов</p>
+		<p>
+			&nbsp;printf(&quot;Введитеn:&quot;);</p>
+		<p>
+			&nbsp;cin&gt;&gt;n;</p>
+		<p>
+			&nbsp;root=tree(n);</p>
+		<p>
+			getch();</p>
+		<p>
+			}</p>
+		<p>
+			<strong>Оптимальные</strong><strong>деревья</strong><strong>. </strong>Полностью сбалансированное бинарное дерево имеет минимальную высоту. Когда все ключи (аргументы) поиска равновероятны (например, цифры в различных числах), полностью сбалансированное бинарное дерево представляет собой <em>оптимальное бинарное дерево поиска</em>.</p>
+		<p>
+			Однако нередки случаи, когда частоты появления ключей не равны между собой (например, символы алфавита), и при этом заранее известны. В этом случае полностью сбалансированное бинарное дерево не оптимально.</p>
+	</body>
+</html>

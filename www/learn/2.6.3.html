@@ -1,0 +1,283 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			Фактически, бинарное дерево представляет собой всего лишь несколько усовершенствованную версию связного списка с двойными ссылками. Основное его преимущество по сравнению со связным списком заключается в том, что он обеспечивает быстрый поиск. Это означает, что вставка новых элементов и просмотр существующих могут проходить очень быстро. Если вы хотите использовать в своих приложениях структуру связного списка, но при этом требуется иметь хорошие показатели по времени поиска, то бинарные деревья &ndash; это именно то, что вам требуется. Нижеприведенная программа реализует разреженный массив, используя для хранения физического массива бинарное дерево.</p>
+		<p>
+			Параметризованный класс разреженного массива на основе бинарного дерева</p>
+		<p>
+			#include &lt;iostream.h&gt;</p>
+		<p>
+			#include &lt;stdlib.h&gt;</p>
+		<p>
+			template &lt;class DataT&gt; class Array{</p>
+		<p>
+			public:</p>
+		<p>
+			long index;//индекс элемента массива</p>
+		<p>
+			DataT info;//информация</p>
+		<p>
+			};</p>
+		<p>
+			//Бинарное дерево для реализации разреженных массивов</p>
+		<p>
+			template &lt;class DataT&gt;</p>
+		<p>
+			class SparseTree : public Array&lt;DataT&gt; {</p>
+		<p>
+			public:</p>
+		<p>
+			SparseTree *left;</p>
+		<p>
+			SparseTree *right;</p>
+		<p>
+			SparseTree *root;</p>
+		<p>
+			SparseTree() {root = null;}</p>
+		<p>
+			Void store (SparseTree *r, SparseTree *pvious, long ix, DataT info);</p>
+		<p>
+			SparseTree *dtree (SparseTree *r, long ix);</p>
+		<p>
+			SparseTree *find (SparseTree *r, long ix);</p>
+		<p>
+			// Сохранение нового элемента в массиве</p>
+		<p>
+			template &lt;class DataT&gt;</p>
+		<p>
+			void SparseTree&lt;DataT&gt;::store (SparseTree *r, SparseTree *pvious, long ix, DataT info)</p>
+		<p>
+			{</p>
+		<p>
+			if (!r) {</p>
+		<p>
+			r=new SparseTree ;</p>
+		<p>
+			if (!r) {</p>
+		<p>
+			cout &lt;&lt;&rdquo;Недостаточно памяти\n&rdquo;;</p>
+		<p style="margin-left:36.0pt;">
+			exit(1);</p>
+		<p>
+			}</p>
+		<p>
+			r-&gt;left =null;</p>
+		<p>
+			r-&gt;right =null;</p>
+		<p>
+			r-&gt;info =info;</p>
+		<p>
+			r-&gt;index =ix;</p>
+		<p>
+			if (!root) root=r; //первый элемент</p>
+		<p>
+			else {</p>
+		<p>
+			if (ix&lt;pvious-&gt;index) pvious-&gt;left = r;</p>
+		<p>
+			else pvious-&gt;right = r;</p>
+		<p>
+			}</p>
+		<p>
+			return;</p>
+		<p>
+			}</p>
+		<p>
+			if (ix&lt; r-&gt; right)</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; store (r-&gt;left,r,ix,info);</p>
+		<p>
+			else</p>
+		<p>
+			store (r-&gt;right,r,ix,info);</p>
+		<p>
+			}</p>
+		<p>
+			//Удаление элемента разреженного массива</p>
+		<p>
+			template &lt;class DataT&gt;</p>
+		<p>
+			SparseTree&lt;DataT&gt; * SparseTree&lt;DataT&gt; ::dtree (SparseTree *r, long ix)</p>
+		<p>
+			{</p>
+		<p>
+			SparseTree&nbsp; *<strong>p ,&nbsp; *</strong>p2;</p>
+		<p>
+			If (!r) returnr; // элемент не найден</p>
+		<p>
+			If (r-&gt;index == ix) {</p>
+		<p>
+			If (r-&gt;left == r-&gt;right) {</p>
+		<p>
+			Free(r);</p>
+		<p>
+			If (r==root) root=null;</p>
+		<p>
+			Return null;</p>
+		<p>
+			}</p>
+		<p>
+			else If (r-&gt;left == null) {</p>
+		<p>
+			p=r-&gt;right;</p>
+		<p>
+			Free(r);</p>
+		<p>
+			If (r==root) root=p;</p>
+		<p>
+			Return p;</p>
+		<p>
+			}</p>
+		<p>
+			else {</p>
+		<p>
+			p2= r-&gt; right;</p>
+		<p>
+			p= r-&gt;right;</p>
+		<p>
+			while (p-&gt;left) p= p-&gt; left;</p>
+		<p>
+			p-&gt;left= r-&gt;left;</p>
+		<p>
+			free(r);</p>
+		<p>
+			if (r==root) root = p2;</p>
+		<p>
+			return p2;</p>
+		<p>
+			}</p>
+		<p>
+			}</p>
+		<p>
+			if (r-&gt;index&lt;ix) r-&gt;right = dtree(r-&gt;right, ix);</p>
+		<p>
+			else r-&gt; left = dtree(r-&gt;left,ix);</p>
+		<p>
+			returnr;</p>
+		<p>
+			}</p>
+		<p>
+			// Поиск элемента по данному индексу</p>
+		<p>
+			template &lt;class DataT&gt;SparseTree &lt;DataT&gt;</p>
+		<p style="margin-left:3.75pt;">
+			SparseTree &lt;DataT&gt;::find (SparseTree&nbsp; *r, long ix);</p>
+		<p style="margin-left:3.75pt;">
+			If (!r) return r;</p>
+		<p style="margin-left:3.75pt;">
+			While (r-&gt;index !=ix) {</p>
+		<p style="margin-left:3.75pt;">
+			If (ix&lt;r-&gt;index) r=r-&gt;left;</p>
+		<p style="margin-left:3.75pt;">
+			Else r=r-&gt;right;</p>
+		<p style="margin-left:3.75pt;">
+			If (r==null) break;</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			returnr;</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			// Параметризованный класс разреженного массива</p>
+		<p style="margin-left:3.75pt;">
+			template &lt; class DataT &gt; class SparseArray : public</p>
+		<p style="margin-left:3.75pt;">
+			SparseTree &lt;DataT&gt; {</p>
+		<p style="margin-left:3.75pt;">
+			Long length;</p>
+		<p style="margin-left:3.75pt;">
+			Public:</p>
+		<p style="margin-left:3.75pt;">
+			SparseArray(long size) {length = size;}</p>
+		<p style="margin-left:3.75pt;">
+			DataT &amp;operator [ ] (long i);</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			//Индексация разреженного массива</p>
+		<p style="margin-left:3.75pt;">
+			template &lt; class DataT &gt;DataT &amp; SparseArray&lt;DataT&gt;: : operator [ ] (long ix)</p>
+		<p style="margin-left:3.75pt;">
+			{</p>
+		<p style="margin-left:3.75pt;">
+			if (ix &lt; 0 || ix&gt; length-1) {</p>
+		<p style="margin-left:3.75pt;">
+			cout &lt;&lt; &ldquo;\nИндекс&rdquo;;</p>
+		<p style="margin-left:3.75pt;">
+			cout &lt;&lt; ix&lt;&lt; &ldquo;выходит за пределы области определения.\n&rdquo;;</p>
+		<p style="margin-left:3.75pt;">
+			exit(1);</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			SparseTree &lt;DataT&gt;*o;</p>
+		<p style="margin-left:3.75pt;">
+			O=find (this-&gt;root,ix);</p>
+		<p style="margin-left:3.75pt;">
+			If (!o) {</p>
+		<p style="margin-left:3.75pt;">
+			Store (this -&gt; root, null, ix,o);</p>
+		<p style="margin-left:3.75pt;">
+			O=find (this-&gt; root,ix);</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			return o-&gt; info;</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+		<p style="margin-left:3.75pt;">
+			main ()</p>
+		<p style="margin-left:3.75pt;">
+			{</p>
+		<p style="margin-left:3.75pt;">
+			SparseArray&lt;int&gt; iob (100000);</p>
+		<p style="margin-left:3.75pt;">
+			SparseArray&lt;double&gt; dob (100000);</p>
+		<p style="margin-left:3.75pt;">
+			Int i;</p>
+		<p style="margin-left:3.75pt;">
+			Cout&lt;&lt;&rdquo;Массив целых: &rdquo;&lt;&lt;endl;</p>
+		<p style="margin-left:3.75pt;">
+			// Поместим в массив несколько чисел</p>
+		<p style="margin-left:3.75pt;">
+			for (i=0;i&lt;5;i++) iob[i]=i;</p>
+		<p style="margin-left:3.75pt;">
+			for (i=0;i&lt;5;i++) cout &lt;&lt; iob[i]&lt;&lt; &ldquo; &rdquo;;</p>
+		<p style="margin-left:3.75pt;">
+			cout&lt;&lt; endl;</p>
+		<p style="margin-left:3.75pt;">
+			iob[2]= iob [3];</p>
+		<p style="margin-left:3.75pt;">
+			for (i=0;i&lt;5;i++) cout&lt;&lt; iob[i]&lt;&lt; &ldquo; &ldquo;;</p>
+		<p style="margin-left:3.75pt;">
+			cout&lt;&lt; endl;</p>
+		<p style="margin-left:3.75pt;">
+			iob[1000]=9345;</p>
+		<p style="margin-left:3.75pt;">
+			iob[2000]=iob[1000]+100;</p>
+		<p style="margin-left:3.75pt;">
+			cout &lt;&lt; iob [1000] &lt;&lt; &ldquo; &ldquo;&lt;&lt; iob[2000] &lt;&lt;endl;</p>
+		<p style="margin-left:3.75pt;">
+			//&nbsp; Поместим в массив несколько чисел</p>
+		<p style="margin-left:3.75pt;">
+			for (i=0;i&lt;5;i++) dob[i*100]=(double) i*1.19;</p>
+		<p style="margin-left:3.75pt;">
+			for (i=0;i&lt;5;i++) cout&lt;&lt; dob[i*100] &lt;&lt; &ldquo; &ldquo;;</p>
+		<p style="margin-left:3.75pt;">
+			cout &lt;&lt; endl;</p>
+		<p style="margin-left:3.75pt;">
+			// Попробуем получить доступ к элементу, которому значение не присваивалось</p>
+		<p style="margin-left:3.75pt;">
+			dob[200] = dob [999];</p>
+		<p style="margin-left:3.75pt;">
+			cout &lt;&lt; dob [200] &lt;&lt; &ldquo; &rdquo;&lt;&lt; dob[999] &lt;&lt; endl;</p>
+		<p style="margin-left:3.75pt;">
+			return 0;</p>
+		<p style="margin-left:3.75pt;">
+			}</p>
+	</body>
+</html>

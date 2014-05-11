@@ -1,0 +1,137 @@
+﻿<html>
+	<head>
+		<title></title>
+	</head>
+	<body>
+		<p>
+			При выборе способа машинного представления дерева используется понятие &ldquo;прошивания&rdquo; дерева. Этот способ обладает эффективностью как с точки зрения уменьшения объема памяти, так и с точки зрения увеличения быстродействия.</p>
+		<p>
+			Дерево &ldquo;прошивается&rdquo; с учетом определенного способа обхода. В этом случае легко разработать алгоритмы обработки дерева и обход осуществляется быстрее, так как вместо стека имеется прошивка. Однако включение новой вершины в прошитое дерево занимает больше времени.</p>
+		<p>
+			При представлении бинарного дерева в стандартной форме листья имеют нулевые значения в полях ссылок. Эти поля ссылок используются для хранения дополнительных связей, упрощающих обход дерева в модели памяти, получившей название <em>прошитого дерева.</em> В прошитом дереве для каждого узла, не имеющего левого преемника, в поле ссылки на левого преемника помещается указатель прошивки на узел дерева, который является непосредственным предшественником этого узла при симметричном (прямом, обратном) обходе дерева. Аналогично, в поле ссылки на правого преемника записывается указатель на узел дерева, являющийся непосредственным преемником рассматриваемого узла при симметричном (прямом, обратном) обходе дерева. На рис. 2.8, б приведено представление прошитого бинарного дерева, изображенного на рис. 2.8, а<em>..</em></p>
+		<p>
+			Для того чтобы различать обычные указатели и указатели прошивки, в каждый узел дерева вводятся два дополнительных поля, в которые&nbsp; записываются&nbsp; единица для обычных указателей и ноль для указателей прошивки.</p>
+		<p>
+			Преимущество прошитых деревьев перед обычными бинарными деревьями заключается не только в более эффективном использовании памяти, но и в том, что алгоритмы обхода такого дерева не требуют стека для реализации возврата.</p>
+		<table cellpadding="0" cellspacing="0">
+			<tbody>
+				<tr>
+					<td height="0">
+						&nbsp;</td>
+				</tr>
+				<tr>
+					<td>
+						&nbsp;</td>
+					<td>
+						<img alt="Подпись:  	  
+а)						б)
+Рис 2.8. Прошивание дерева
+" height="280" src="file:///C:/Users/5394~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png" width="556" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<p>
+			<br clear="ALL" />
+			<strong>Пример 2.5.</strong> Процедура прошивания бинарного дерева при обратном обходе.</p>
+		<p>
+			typedefstruct_Tree{// Структура узла бинарного дерева</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned char sym[30]; // строка</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Tree *left, *right; // указатели</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; char ltag, rtag, is_sew; // флаги</p>
+		<p>
+			} Tree;</p>
+		<p>
+			// Прошиваниедерева</p>
+		<p>
+			void Sew_Tree( Tree *head)&nbsp;&nbsp;</p>
+		<p>
+			{</p>
+		<p>
+			Tree *last, *now&nbsp; // указатели на предыдущий узел и текущий лист</p>
+		<p>
+			int flag = 0;</p>
+		<p>
+			last = NULL;</p>
+		<p>
+			now = head;</p>
+		<p>
+			while (1) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!now-&gt;is_sew) break; // конецпрошиваниядерева</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (now-&gt;left != NULL &amp;&amp; now-&gt;left-&gt;is_sew)</p>
+		<p style="margin-left:36.0pt;">
+			{&nbsp;&nbsp;&nbsp;&nbsp; // идём влево, если ветвь существует и не прошита</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; last = now;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now = now-&gt;left;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; continue;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else {&nbsp; // еслилеваяветвьпройдена, идёмвправо</p>
+		<p>
+			if(now-&gt;right = NULL||(now-&gt;right != NULL &amp;&amp; !now-&gt;right-&gt;is_sew)) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;if (now-&gt;left == NULL) {</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if (last-&gt;right != now) { // еслимыневправойветви, толевый</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // указатель &quot;пришиваем&quot; к правому элементу</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;ltag= 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;left = last-&gt;right;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; if (now-&gt;right == NULL)</p>
+		<p style="margin-left:35.4pt;">
+			{ // правый указатель - на предыдущий узел</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;rtag= 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;right = last;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;if (now == head) flag = 1;&nbsp; // еслидошлидовершины,</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;now-&gt;is_sew = 0;</p>
+		<p style="margin-left:36.0pt;">
+			&nbsp; if (flag) break;&nbsp; // выходим</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;now = head;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;last = 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;continue;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;else {&nbsp; // идёмвлево</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (last == NULL) break;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;ltag = 0;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now-&gt;left = last-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; last = now;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; now= now-&gt;right;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; continue;</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;}</p>
+		<p>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+		<p>
+			&nbsp;}</p>
+	</body>
+</html>
