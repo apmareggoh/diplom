@@ -10,7 +10,7 @@ init = function (value) {
     for (i = 1; i < 100; i++) {
         mass[i] = 0;
     }
-    mass[1] = value;
+    mass[1] = value; 
     var svg = document.createElement('svg');
     var circle = document.createElementNS(svgParam, 'circle');
     var text = document.createElementNS(svgParam, 'text');
@@ -259,6 +259,7 @@ optima = function () {
     massAutoElement = newMass;
     avtomaticTree();
 };
+<<<<<<< HEAD
 var massValue = [],// Значения, на которых надо вставлять пустой
     massLeft = [], // Указатели "вставить слева"
     massRight = []; // Указатели "вставить справа"
@@ -477,3 +478,5 @@ clearEmpty = function () {
     }
 
 };
+=======
+>>>>>>> d301a94fb4781a3e5c9858a5b3b29191300db4c5
