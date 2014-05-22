@@ -259,7 +259,7 @@ optima = function () {
     massAutoElement = newMass;
     avtomaticTree();
 };
-<<<<<<< HEAD
+
 var massValue = [],// Значения, на которых надо вставлять пустой
     massLeft = [], // Указатели "вставить слева"
     massRight = []; // Указатели "вставить справа"
@@ -478,5 +478,3 @@ clearEmpty = function () {
     }
 
 };
-=======
->>>>>>> d301a94fb4781a3e5c9858a5b3b29191300db4c5

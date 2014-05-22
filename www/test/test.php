@@ -1,7 +1,41 @@
-﻿<html>
+﻿<? echo '<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Тест</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="../template/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/template/js/cufon-yui.js"></script>
+<script type="text/javascript" src="../template/js/arial.js"></script>
+<script type="text/javascript" src="../template/js/cuf_run.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+</head>
 <body>
-<div style = "margin: 0 auto;width:1000px;border:2px solid black;padding:10px;">
-<?
+<div class="main">
+  <div class="header">
+    <div class="header_resize">
+      <div class="logo">
+        <h1><a href="/"><span>Бинарные</span>Деревья <small>БГТУ 2014 </small></a></h1>
+      </div>
+      <div class="menu">
+        <ul>';
+require('../template/main_menu.php');
+echo '</ul>
+      </div>
+      <div class="clr"></div>
+    </div>
+    <div class="headert_text_resize">
+      <div class="headert_text">
+        <h2>Дипломная работа</h2>
+        <p>Выполнена весной 2014 года на базе Брянского Государственного Технического Университета</p>
+      </div>
+      <img src="../template/images/img_main.jpg" alt="" width="455" height="273" />
+      <div class="clr"></div>
+    </div>
+  </div>
+  <div class="body">
+    <div class="body_resize">
+      <div class="left">
+        <div class="resize_bg">';
+
 @mysql_connect("localhost", "root");
 @mysql_select_db("diplom") or die("ERROR");
 mysql_query("SET NAMES `UTF8`");
@@ -97,23 +131,23 @@ mysql_query($sql3);
 ?>
 <table style = "width: 968px;">
   <tr>
-    <td colspan="4" style = "border-bottom: 1px solid black;">
+    <td colspan="4" style = "border-bottom: 1px solid black; text-align: center;">
    <?echo $el[$random-1]['quest']?>
     </td>
   </tr>
   <tr >
   <form method="post" action="/test/test.php">
-    <td style = "border-right: 1px dotted black;">
-<?echo $el[$random-1]['ans4']?><input type="checkbox" name="tans4" value="1"/><br>
-    </td><td style = "border-right: 1px dotted black;">
+    <td style = "border-right: 1px dotted black; width: 24%; vertical-align: top;">
+<?echo $el[$random-1]['ans4']?>True:<input type="checkbox" name="tans4" value="1"/><br>
+    </td><td style = "border-right: 1px dotted black; width: 24%; vertical-align: top;">
 <?echo $el[$random-1]['ans2']?> True:<input type="checkbox" name="tans2" value="1"/><br>
-    </td><td style = "border-right: 1px dotted black;">
+    </td><td style = "border-right: 1px dotted black; width: 24%; vertical-align: top;">
 <?echo $el[$random-1]['ans3']?> True:<input type="checkbox" name="tans3" value="1"/><br>
-    </td><td>
+    </td><td style = "width: 24%; vertical-align: top;">
 <?echo $el[$random-1]['ans1']?> True:<input type="checkbox" name="tans1" value="1"/><br>
     </td></tr><tr><td>
 <input type=hidden name="id" value="<?echo $el[$random-1]['id']?>"/><br>
-<input type="Submit" name="submit" value="Next quest">
+<input type="Submit" name="submit" value="Следующий вопрос">
   </td></tr>
 </form>
   </tr>
@@ -159,6 +193,17 @@ for($i=1;$i<$num;$i++){
 	}
 }
 ?>
+
+<div class="clr"></div>
+</div>
+</div>
+<div class="footer">
+  <div class="footer_resize">
+    <p class="lf">Copyright &copy; <a href="#">BSTU</a>. All Rights Reserved</p>
+    <div class="clr"></div>
+  </div>
+  <div class="clr"></div>
+</div>
 </div>
 </body>
 </html>
